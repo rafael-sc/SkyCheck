@@ -1,5 +1,5 @@
 # SkyCheck
-Aplicativo de Previsão do Tempo
+Aplicativo Android de Previsão do Tempo
 
 ### Objetivo
 Visualizar informações da previsão do tempo atual e dos próximos dias para a localização atual e/ou qualquer outra localização
