@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.locations
+package com.example.skycheck.presentation.screens.locations
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,13 +36,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skycheck.R
-import com.example.skycheck.ui.ColorBackground
-import com.example.skycheck.ui.ColorTextAction
-import com.example.skycheck.ui.ColorTextPrimary
-import com.example.skycheck.ui.ColorTextPrimaryVariant
-import com.example.skycheck.ui.MaxTemperature
-import com.example.skycheck.ui.MinTemperature
-import com.example.skycheck.ui.PurpleGrey80
+import com.example.skycheck.utils.ui.ColorBackground
+import com.example.skycheck.utils.ui.ColorTextAction
+import com.example.skycheck.utils.ui.ColorTextPrimary
+import com.example.skycheck.utils.ui.ColorTextPrimaryVariant
+import com.example.skycheck.utils.ui.MaxTemperature
+import com.example.skycheck.utils.ui.MinTemperature
+import com.example.skycheck.utils.ui.PurpleGrey80
 
 @Composable
 fun LocationsScreen() {

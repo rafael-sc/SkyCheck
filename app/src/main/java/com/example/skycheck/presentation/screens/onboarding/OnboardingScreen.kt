@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.onboarding
+package com.example.skycheck.presentation.screens.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,13 +33,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.skycheck.R
-import com.example.skycheck.ui.ColorBackground
-import com.example.skycheck.ui.ColorGradient1
-import com.example.skycheck.ui.ColorGradient2
-import com.example.skycheck.ui.ColorGradient3
-import com.example.skycheck.ui.ColorTextAction
-import com.example.skycheck.ui.ColorTextPrimary
-import com.example.skycheck.ui.ColorTextPrimaryVariant
+import com.example.skycheck.utils.ui.ColorBackground
+import com.example.skycheck.utils.ui.ColorGradient1
+import com.example.skycheck.utils.ui.ColorGradient2
+import com.example.skycheck.utils.ui.ColorGradient3
+import com.example.skycheck.utils.ui.ColorTextAction
+import com.example.skycheck.utils.ui.ColorTextPrimary
+import com.example.skycheck.utils.ui.ColorTextPrimaryVariant
 
 @Composable
 fun OnboardingScreen() {

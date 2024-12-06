@@ -1,4 +1,4 @@
-package com.example.skycheck.ui
+package com.example.skycheck.utils.ui
 
 import androidx.compose.ui.graphics.Color
 
