@@ -1,4 +1,4 @@
-package com.example.skycheck.data.dto
+package com.example.skycheck.data.model
 
 import com.google.gson.annotations.SerializedName
 

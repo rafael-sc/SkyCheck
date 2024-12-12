@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.screens.locations
+package com.example.skycheck.presentation.screen.locations
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -28,6 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -35,17 +39,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.skycheck.R
-import com.example.skycheck.utils.ui.ColorBackground
-import com.example.skycheck.utils.ui.ColorTextAction
-import com.example.skycheck.utils.ui.ColorTextPrimary
-import com.example.skycheck.utils.ui.ColorTextPrimaryVariant
-import com.example.skycheck.utils.ui.MaxTemperature
-import com.example.skycheck.utils.ui.MinTemperature
-import com.example.skycheck.utils.ui.PurpleGrey80
+import com.example.skycheck.presentation.theme.ColorBackground
+import com.example.skycheck.presentation.theme.ColorTextAction
+import com.example.skycheck.presentation.theme.ColorTextPrimary
+import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
+import com.example.skycheck.presentation.theme.MaxTemperature
+import com.example.skycheck.presentation.theme.MinTemperature
+import com.example.skycheck.presentation.theme.PurpleGrey80
 
 @Composable
-fun LocationsScreen() {
+fun LocationsScreen(navController: NavController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = ColorBackground
@@ -68,7 +74,63 @@ fun LocationsScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             SearchInput(value = "") {}
             Spacer(modifier = Modifier.height(16.dp))
-            LocationCard()
+
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                LocationCard( // ensolarado
+                    gradient = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFFFE34A),
+                            Color(0xFFFFA333)
+                        ), // Amarelo vibrante para laranja
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, Float.POSITIVE_INFINITY)
+                    )
+                )
+                LocationCard( // sol e nuvens
+                    gradient = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFB3E5FC),
+                            Color(0xFFE1F5FE)
+                        ), // Azul bebê para azul quase branco
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, Float.POSITIVE_INFINITY)
+                    )
+                )
+                LocationCard( // nublado
+                    gradient = Brush.linearGradient(
+                        colors = listOf(Color(0xFFD3D3D3), Color(0xFFF5F5F5)), // Cinza claro para branco fosco
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, Float.POSITIVE_INFINITY)
+                    )
+                )
+                LocationCard( // chuva
+                    gradient = Brush.linearGradient(
+                        colors = listOf(Color(0xFFA5CBE3), Color(0xFFCFE3F4)), // Azul claro acinzentado para azul pálido
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, Float.POSITIVE_INFINITY)
+                    )
+                )
+                LocationCard( // tempestade
+                    gradient = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFF4C7070),
+                            Color(0xFF8D8D8D)
+                        ), // Cinza carvão para preto
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, Float.POSITIVE_INFINITY)
+                    )
+                )
+                LocationCard( // neve
+                    gradient = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFFFFFFF),
+                            Color(0xFFB0E0E6)
+                        ), // Branco para azul pálido
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, Float.POSITIVE_INFINITY)
+                    )
+                )
+            }
         }
     }
 }
@@ -120,7 +182,9 @@ private fun SearchInput(
 }
 
 @Composable
-private fun LocationCard() {
+private fun LocationCard(
+    gradient: Brush
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -132,23 +196,7 @@ private fun LocationCard() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-//                .background(
-//                    brush = Brush.linearGradient(
-//                        colors = listOf(Color(0xFF4C7070), Color(0xFF8D8D8D)), // Cinza carvão para preto
-//                        start = Offset(0f, 0f),
-//                        end = Offset(0f, Float.POSITIVE_INFINITY)
-//                    )
-//                    Brush.linearGradient(
-//                        colors = listOf(Color(0xFFFFE34A), Color(0xFFFFA333)), // Amarelo vibrante para laranja
-//                        start = Offset(0f, 0f),
-//                        end = Offset(0f, Float.POSITIVE_INFINITY)
-//                    )
-//                    Brush.linearGradient(
-//                        colors = listOf(Color(0xFFFFFFFF), Color(0xFFB0E0E6)), // Branco para azul pálido
-//                        start = Offset(0f, 0f),
-//                        end = Offset(0f, Float.POSITIVE_INFINITY)
-//                    )
-//                )
+                .background(brush = gradient)
                 .padding(12.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -162,13 +210,19 @@ private fun LocationCard() {
                 Column {
                     Text(
                         text = stringResource(id = R.string.meu_local),
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp, fontWeight = FontWeight.SemiBold),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.SemiBold
+                        ),
                         color = ColorTextPrimary
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = stringResource(id = R.string.localidade, "São Paulo"),
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium
+                        ),
                         color = ColorTextPrimary
                     )
                 }
@@ -233,5 +287,5 @@ private fun MinMaxForecast(
 @Preview(showSystemUi = true)
 @Composable
 private fun LocationsScreenPreview() {
-    LocationsScreen()
+    LocationsScreen(navController = rememberNavController())
 }

@@ -1,7 +1,7 @@
 package com.example.skycheck.data.repository_impl
 
 import com.example.skycheck.data.api.OpenWeatherApi
-import com.example.skycheck.data.dto.CurrentForecastDto
+import com.example.skycheck.data.model.CurrentForecastDto
 import com.example.skycheck.domain.repository.OpenWeatherRepository
 import retrofit2.Response
 

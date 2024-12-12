@@ -1,13 +1,13 @@
 package com.example.skycheck.data.api
 
-import com.example.skycheck.data.dto.CurrentForecastDto
+import com.example.skycheck.data.model.CurrentForecastDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface OpenWeatherApi {
 
-    @GET("weather{lat}&{lon}=&{appid}&lang=pt_br")
+    @GET("weather?{lat}&{lon}&{appid}&lang=pt_br")
     suspend fun getCurrentForecast(
         @Path("lat") lat: Double = 44.34,
         @Path("lon") lng: Double = 10.99,

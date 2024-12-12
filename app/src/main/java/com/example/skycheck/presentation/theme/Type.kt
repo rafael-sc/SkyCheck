@@ -1,4 +1,4 @@
-package com.example.skycheck.utils.ui
+package com.example.skycheck.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

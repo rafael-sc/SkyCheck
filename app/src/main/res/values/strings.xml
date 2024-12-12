@@ -2,19 +2,25 @@
     <string name="app_name">SkyCheck</string>
     <string name="slogan">O seu aplicativo de Previsão do Tempo</string>
 
+    <!--  SIMPLE TEXTS  -->
     <string name="permissao_necessaria">Permissão necessária</string>
     <string name="acesso_a_localizacao">Acesso a Localização</string>
-    <string name="justificativa_permissao">O app SkyCheck precisa ter acesso para mostrar a previsão da sua localização atual</string>
+    <string name="justificativa_permissao">O app SkyCheck precisa de acesso para mostrar a previsão da sua localização atual</string>
     <string name="lbl_btn_comecar">Começar</string>
     <string name="localidades">Localidades</string>
     <string name="buscar_localidade">Buscar localidade</string>
     <string name="meu_local">Meu Local</string>
+    <string name="nascer_do_sol">Nascer do Sol</string>
+    <string name="por_do_sol">Pôr do Sol</string>
+    <string name="proximos_dias">Próximos dias</string>
+    <string name="vento">Vento</string>
+    <string name="umidade">Umidade</string>
+    <string name="nuvens">Nuvens</string>
+
+    <!--  TEXTS WITH ARGUMENT  -->
     <string name="localidade">%1$s</string>
     <string name="valor_temperatura">%1$d°</string>
-    <string name="nublado">Nublado</string>
-<!--    <string name="ensolaraado">Ensolaraado</string>-->
-<!--    <string name="chuvoso">Chuvoso</string>-->
-<!--    <string name="ensolaraado">Ensolaraado</string>-->
-<!--    <string name="ensolaraado">Ensolaraado</string>-->
-
+    <string name="sensacao_termica">Sensação de %1$d°</string>
+    <string name="data">%1$s</string>
+    <string name="valor_decimal">%1$.1f</string>
 </resources>
