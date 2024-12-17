@@ -5,6 +5,9 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 
+# secrets.xml
+app/src/main/res/values/secrets.xml
+
 # Log/OS Files
 *.log
 
