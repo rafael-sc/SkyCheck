@@ -25,3 +25,5 @@ val ColorPagerInactive = Color(0xFFCBCBCB)
 
 val MinTemperature = Color(0xFF449C48)
 val MaxTemperature = Color(0xFFD5493F)
+
+val RedDelete = Color(0xFFC53939)

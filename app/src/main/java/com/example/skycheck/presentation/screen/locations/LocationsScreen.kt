@@ -1,57 +1,51 @@
 package com.example.skycheck.presentation.screen.locations
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.skycheck.R
+import com.example.skycheck.data.model.entity.Location
+import com.example.skycheck.presentation.component.locations.LocationCard
+import com.example.skycheck.presentation.component.locations.SearchInput
+import com.example.skycheck.presentation.component.locations.SwipeToDeleteContainer
 import com.example.skycheck.presentation.theme.ColorBackground
-import com.example.skycheck.presentation.theme.ColorTextAction
 import com.example.skycheck.presentation.theme.ColorTextPrimary
-import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
-import com.example.skycheck.presentation.theme.MaxTemperature
-import com.example.skycheck.presentation.theme.MinTemperature
-import com.example.skycheck.presentation.theme.PurpleGrey80
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LocationsScreen(navController: NavController) {
+fun LocationsScreen(
+    navController: NavController,
+    viewModel: LocationsViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val searchedLocationQuery by viewModel.searchedLocationQuery.collectAsState()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = ColorBackground
@@ -67,222 +61,107 @@ fun LocationsScreen(navController: NavController) {
                 )
         ) {
             Text(
-                text = "Localidades",
+                text = stringResource(id = R.string.localidades),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                 color = ColorTextPrimary
             )
             Spacer(modifier = Modifier.height(16.dp))
-            SearchInput(value = "") {}
+            SearchInput(
+                value = searchedLocationQuery,
+                onValueChange = {
+                    viewModel.onEvent(LocationsUiEvent.OnChangeLocation(it))
+                },
+                isSearching = uiState.isSearching
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            AnimatedVisibility(
+                visible = uiState.geocodeLocations.isNotEmpty()
+            ) {
+                Box {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color.White)
+                            .padding(8.dp)
+                    ) {
+                        items(items = uiState.geocodeLocations) { location ->
+                            Text(
+                                text = stringResource(
+                                    id = R.string.localidade_estado_pais,
+                                    location.name,
+                                    location.state,
+                                    location.country
+                                ),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = ColorTextPrimary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        viewModel.onEvent(
+                                            event = LocationsUiEvent.OnSaveLocation(
+                                                location = Location(
+                                                    locality = location.name,
+                                                    latitude = location.lat,
+                                                    longitude = location.lon
+                                                )
+                                            )
+                                        )
+                                    }
+                            )
+                        }
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                LocationCard( // ensolarado
-                    gradient = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFFFFE34A),
-                            Color(0xFFFFA333)
-                        ), // Amarelo vibrante para laranja
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, Float.POSITIVE_INFINITY)
-                    )
-                )
-                LocationCard( // sol e nuvens
-                    gradient = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFFB3E5FC),
-                            Color(0xFFE1F5FE)
-                        ), // Azul bebê para azul quase branco
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, Float.POSITIVE_INFINITY)
-                    )
-                )
-                LocationCard( // nublado
-                    gradient = Brush.linearGradient(
-                        colors = listOf(Color(0xFFD3D3D3), Color(0xFFF5F5F5)), // Cinza claro para branco fosco
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, Float.POSITIVE_INFINITY)
-                    )
-                )
-                LocationCard( // chuva
-                    gradient = Brush.linearGradient(
-                        colors = listOf(Color(0xFFA5CBE3), Color(0xFFCFE3F4)), // Azul claro acinzentado para azul pálido
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, Float.POSITIVE_INFINITY)
-                    )
-                )
-                LocationCard( // tempestade
-                    gradient = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFF4C7070),
-                            Color(0xFF8D8D8D)
-                        ), // Cinza carvão para preto
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, Float.POSITIVE_INFINITY)
-                    )
-                )
-                LocationCard( // neve
-                    gradient = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFFFFFFFF),
-                            Color(0xFFB0E0E6)
-                        ), // Branco para azul pálido
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, Float.POSITIVE_INFINITY)
-                    )
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun SearchInput(
-    value: String,
-    onValueChange: (String) -> Unit
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = { onValueChange(it) },
-        placeholder = {
-            Text(
-                text = stringResource(id = R.string.buscar_localidade),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            disabledContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedTextColor = ColorTextAction,
-            unfocusedTextColor = PurpleGrey80,
-            disabledPlaceholderColor = PurpleGrey80,
-            cursorColor = ColorTextAction,
-            focusedBorderColor = Color.White,
-            unfocusedBorderColor = Color.White,
-            unfocusedPlaceholderColor = ColorTextPrimaryVariant
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(
-                elevation = 8.dp,
-                spotColor = Color.Black.copy(alpha = 0.6f),
-                ambientColor = Color.Gray,
-                shape = RoundedCornerShape(16.dp),
-                clip = true
-            ),
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-                tint = ColorTextPrimaryVariant
-            )
-        }
-    )
-}
-
-@Composable
-private fun LocationCard(
-    gradient: Brush
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(brush = gradient)
-                .padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column {
-                    Text(
-                        text = stringResource(id = R.string.meu_local),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        color = ColorTextPrimary
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = stringResource(id = R.string.localidade, "São Paulo"),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = ColorTextPrimary
-                    )
-                }
-                Text(
-                    text = stringResource(id = R.string.valor_temperatura, 27),
-                    style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp)
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Text(
-                    text = "Tempestade com chuva leve",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = ColorTextPrimaryVariant
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+            if (!uiState.userLocations.isNullOrEmpty()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    MinMaxForecast(
-                        value = "21",
-                        icon = Icons.Default.ArrowDropDown,
-                        color = MaxTemperature
-                    )
-                    Spacer(modifier = Modifier.width(2.dp))
-                    MinMaxForecast(
-                        value = "33",
-                        icon = Icons.Default.ArrowDropUp,
-                        color = MinTemperature
-                    )
+                    items(
+                        items = uiState.userLocations!!,
+                        key = { it.id ?: 0 }
+                    ) { location ->
+                        SwipeToDeleteContainer(
+                            location = location,
+                            onDelete = {
+                                viewModel.onEvent(LocationsUiEvent.OnDeleteLocation(location = location))
+                            },
+                            content = { LocationCard(location = location) }
+                        )
+                    }
                 }
+            } else {
+                Text(text = "Nenhuma localização para exibir")
             }
+
+//            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+//                LocationCard( // ensolarado
+//
+//                )
+//                LocationCard( // sol e nuvens
+//
+//                )
+//                LocationCard( // nublado
+//
+//                )
+//                LocationCard( // chuva
+//
+//                )
+//                LocationCard( // tempestade
+//
+//                )
+//                LocationCard( // neve
+//
+//                )
+//            }
         }
     }
 }
 
-@Composable
-private fun MinMaxForecast(
-    value: String,
-    icon: ImageVector,
-    color: Color
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(20.dp),
-            tint = color
-        )
-        Text(
-            text = stringResource(id = R.string.valor_temperatura, value.toInt()),
-            style = MaterialTheme.typography.labelMedium,
-            color = ColorTextPrimaryVariant
-        )
-    }
-}
 
 @Preview(showSystemUi = true)
 @Composable

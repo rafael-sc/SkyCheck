@@ -1,4 +1,4 @@
-package com.example.skycheck.utils.functions
+package com.example.skycheck.utils
 
 import android.os.Build
 import androidx.annotation.RequiresApi

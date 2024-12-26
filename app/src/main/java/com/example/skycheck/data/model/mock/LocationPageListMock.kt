@@ -1,21 +1,24 @@
 package com.example.skycheck.data.model.mock
 
-import com.example.skycheck.data.model.LocationPage
+import com.example.skycheck.data.model.entity.Location
 
-val locationsPageMock = listOf(
-    LocationPage(
+var locationsPageMock = listOf(
+    Location(
+        id = 1,
         locality = "São Paulo",
-        latitude = 0.0,
-        longitude = 0.0
+        latitude = -23.5506507,
+        longitude = -46.6333824
     ),
-    LocationPage(
+    Location(
+        id = 2,
         locality = "Taubaté",
-        latitude = 0.0,
-        longitude = 0.0
+        latitude = -23.031448,
+        longitude = -45.5612792
     ),
-    LocationPage(
-        locality = "Londres",
-        latitude = 0.0,
-        longitude = 0.0
+    Location(
+        id = 3,
+        locality = "Gold Coast",
+        latitude = -28.0023731,
+        longitude = 153.4145987
     ),
 )

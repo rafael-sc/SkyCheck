@@ -16,14 +16,14 @@ import com.example.skycheck.presentation.component.current_location.CurrentLocat
 import com.example.skycheck.presentation.component.current_location.CurrentLocationPage
 import com.example.skycheck.presentation.route.Locations
 import com.example.skycheck.presentation.theme.ColorBackground
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CurrentLocationScreen(
-    navController: NavController
-//    viewModel: CurrentLocationViewModel = koinViewModel()
+    navController: NavController,
+    viewModel: CurrentLocationViewModel = koinViewModel()
 ) {
 
-    val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(initialPage = 0) { locationsPageMock.size }
 
     Scaffold(

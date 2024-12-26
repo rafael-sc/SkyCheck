@@ -1,8 +1,8 @@
-package com.example.skycheck.data.model
+package com.example.skycheck.data.model.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class CurrentForecastDto(
+data class ForecastDto(
     val weather: List<Weather>,
     val main: MainForecast,
     val wind: Wind,
@@ -11,7 +11,8 @@ data class CurrentForecastDto(
     val sys: SystemInfo,
     val timezone: Int,
     @SerializedName("name") val localityName: Long,
-    val cod: Int
+    val cod: Int,
+    @SerializedName("dt_txt") val datetimeText: String = ""
 ) {
     data class Weather(
         val main: String,

@@ -19,6 +19,7 @@
 
     <!--  TEXTS WITH ARGUMENT  -->
     <string name="localidade">%1$s</string>
+    <string name="localidade_estado_pais">%1$s, %2$s - %3$s</string>
     <string name="valor_temperatura">%1$d°</string>
     <string name="sensacao_termica">Sensação de %1$d°</string>
     <string name="data">%1$s</string>

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     kotlin("plugin.serialization") version "2.0.21"
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -52,9 +53,21 @@ android {
 }
 
 dependencies {
+    // Google Location
+    implementation(libs.play.services.location)
+
+    // Room Database
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
+
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Logging Interceptor e OkHttpClient
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     // Retrofit
     implementation(libs.retrofit)

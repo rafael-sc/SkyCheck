@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.skycheck.data.model.LocationPage
+import com.example.skycheck.data.model.entity.Location
 
 @Composable
 fun CurrentLocationPage(
-    locationPage: LocationPage
+    locationPage: Location
 ) {
     Column(
         modifier = Modifier

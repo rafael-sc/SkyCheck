@@ -6,5 +6,5 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     single { CurrentLocationViewModel() }
-    single { LocationsViewModel() }
+    single { LocationsViewModel(get(), get()) }
 }
