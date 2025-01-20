@@ -22,6 +22,7 @@ import com.example.skycheck.presentation.theme.ColorTextPrimary
 fun CurrentLocationBottomBar(
     pagesSize: Int,
     selectedPage: Int,
+    isLoadingLocations: Boolean,
     onLocationsClick: () -> Unit
 ) {
     Box(
@@ -31,10 +32,14 @@ fun CurrentLocationBottomBar(
             .height(52.dp)
             .padding(horizontal = 16.dp)
     ) {
-        CurrentLocationPageIndicator(
-            pagesSize = pagesSize,
-            selectedPage = selectedPage
-        )
+        if (isLoadingLocations) {
+            DotsAnimation()
+        } else {
+            CurrentLocationPageIndicator(
+                pagesSize = pagesSize,
+                selectedPage = selectedPage
+            )
+        }
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.CenterEnd

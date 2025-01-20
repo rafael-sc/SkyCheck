@@ -20,7 +20,7 @@ class OpenWeatherRepositoryImpl(
         return openWeatherApi.getCurrentForecast(
             lat = lat,
             lon = lng,
-            apiKey = OPEN_WEATHER_API_KEY_RES
+//            apiKey = OPEN_WEATHER_API_KEY_RES
         )
     }
 
@@ -31,7 +31,7 @@ class OpenWeatherRepositoryImpl(
         return openWeatherApi.getNext5DaysForecast(
             lat = lat,
             lon = lng,
-            apiKey = OPEN_WEATHER_API_KEY_RES
+//            apiKey = OPEN_WEATHER_API_KEY_RES
         )
     }
 

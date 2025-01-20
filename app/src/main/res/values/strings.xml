@@ -23,5 +23,8 @@
     <string name="valor_temperatura">%1$d°</string>
     <string name="sensacao_termica">Sensação de %1$d°</string>
     <string name="data">%1$s</string>
+    <string name="hora">%1$sh</string>
     <string name="valor_decimal">%1$.1f</string>
+    <string name="valor_porcentagem">%1$d%%</string>
+    <string name="valor_km">%1$dkm/h</string>
 </resources>

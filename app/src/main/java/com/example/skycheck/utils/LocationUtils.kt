@@ -1,62 +1,40 @@
 package com.example.skycheck.utils
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Looper
 import androidx.core.content.ContextCompat
 import com.example.skycheck.data.model.entity.Location
-import com.example.skycheck.presentation.screen.current_location.CurrentLocationViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 
-class LocationUtils(context: Context) {
+fun hasLocationPermission(context: Context): Boolean {
+    return (
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        ||
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    )
+}
 
-//    private val _fusedLocationClient: FusedLocationProviderClient =
-//        LocationServices.getFusedLocationProviderClient(context)
-//
-//    @SuppressLint("MissingPermission")
-//    fun requestLocationUpdates(viewModel: CurrentLocationViewModel) {
-//        val locationCallback = object : LocationCallback() {
-//            override fun onLocationResult(locationResult: LocationResult) {
-//                super.onLocationResult(locationResult)
-//                locationResult.lastLocation?.let {
-//                    val location = Location(
-//                        id = 0,
-//                        locality = it.provider ?: "",
-//                        latitude = it.latitude,
-//                        longitude = it.longitude
-//                    )
-//                    // request location updates in ViewModel
-//                    viewModel.updateCurrentUserLocation(location)
-//                }
-//            }
-//        }
-//
-//        val locationRequest = LocationRequest.Builder(
-//            Priority.PRIORITY_HIGH_ACCURACY,
-//            1000
-//        ).build()
-//
-//        _fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-//    }
-//
-//    fun hasLocationPermission(context: Context): Boolean {
-//        return (
-//                ContextCompat.checkSelfPermission(
-//                    context,
-//                    Manifest.permission.ACCESS_FINE_LOCATION
-//                ) == PackageManager.PERMISSION_GRANTED
-//                        ||
-//                        ContextCompat.checkSelfPermission(
-//                            context,
-//                            Manifest.permission.ACCESS_COARSE_LOCATION
-//                        ) == PackageManager.PERMISSION_GRANTED
-//                )
-//    }
+fun isCurrentUserLocationInList(locations: List<Location>): Boolean {
+    for (location in locations) {
+        if (location.isCurrentUserLocality) {
+            return true
+        }
+    }
+    return false
+}
+
+fun formUserLocationsList(currentUserLocation: Location, userLocations: List<Location>) : List<Location> {
+    var filteredLocations = userLocations
+
+    if (isCurrentUserLocationInList(userLocations)) {
+        filteredLocations = userLocations.filter { !it.isCurrentUserLocality }
+    }
+
+    return listOf(currentUserLocation) + filteredLocations
 }

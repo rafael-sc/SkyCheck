@@ -1,5 +1,7 @@
 package com.example.skycheck.presentation.component.current_location
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,14 +33,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.skycheck.R
+import com.example.skycheck.data.model.dto.ForecastDto
+import com.example.skycheck.presentation.screen.current_location.MainImageForecastDimensions
 import com.example.skycheck.presentation.theme.ColorGradient1
 import com.example.skycheck.presentation.theme.ColorGradient2
 import com.example.skycheck.presentation.theme.ColorGradient3
 import com.example.skycheck.presentation.theme.ColorTextSecondary
 import com.example.skycheck.presentation.theme.ColorTextSecondaryVariant
+import com.example.skycheck.utils.Constants.TODAY
+import com.example.skycheck.utils.capitalizeSentence
+import com.example.skycheck.utils.convertKelvinToCelsius
+import com.example.skycheck.utils.formatCurrentDate
+import com.example.skycheck.utils.getDayOfWeek
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CurrentLocationMainCardForecast() {
+fun CurrentLocationMainCardForecast(
+    forecastData: ForecastDto,
+    currentMainImage: MainImageForecastDimensions
+) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -63,13 +76,17 @@ fun CurrentLocationMainCardForecast() {
             ) {
                 Column {
                     Text(
-                        text = stringResource(id = R.string.data, "Parcialmente nublado"),
+                        text = capitalizeSentence(forecastData.weather[0].description),
                         color = ColorTextSecondary,
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp
+                        )
                     )
                     Spacer(modifier = Modifier.height(4.dp))
+                    val formattedTodayDate = "${getDayOfWeek(TODAY)}, ${formatCurrentDate(TODAY)}"
                     Text(
-                        text = stringResource(id = R.string.data, "Terça, 10 Dez"),
+                        text = formattedTodayDate,
                         color = ColorTextSecondaryVariant,
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold)
                     )
@@ -82,7 +99,10 @@ fun CurrentLocationMainCardForecast() {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(id = R.string.valor_temperatura, 21),
+                    text = stringResource(
+                        id = R.string.valor_temperatura,
+                        convertKelvinToCelsius(forecastData.main.temp)
+                    ),
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 72.sp,
@@ -94,7 +114,10 @@ fun CurrentLocationMainCardForecast() {
                     modifier = Modifier.height(72.dp)
                 )
                 Text(
-                    text = stringResource(id = R.string.sensacao_termica, 23),
+                    text = stringResource(
+                        id = R.string.sensacao_termica,
+                        convertKelvinToCelsius(forecastData.main.feelsLike)
+                    ),
                     color = ColorTextSecondaryVariant,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -102,18 +125,24 @@ fun CurrentLocationMainCardForecast() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    CurrentLocationColumnMaxMinTemp(icon = Icons.Default.ArrowDropDown, value = 16)
-                    CurrentLocationColumnMaxMinTemp(icon = Icons.Default.ArrowDropUp, value = 25)
+                    CurrentLocationColumnMaxMinTemp(
+                        icon = Icons.Default.ArrowDropDown,
+                        value = convertKelvinToCelsius(forecastData.main.minTemperature)
+                    )
+                    CurrentLocationColumnMaxMinTemp(
+                        icon = Icons.Default.ArrowDropUp,
+                        value = convertKelvinToCelsius(forecastData.main.maxTemperature)
+                    )
                 }
             }
         }
-        Box(modifier = Modifier.padding(horizontal = 20.dp)) {
+        Box(modifier = Modifier.padding(horizontal = if (currentMainImage.hasHorizontalPadding) 20.dp else 0.dp)) {
             Image(
-                painter = painterResource(id = R.drawable.img_thunder),
+                painter = painterResource(id = currentMainImage.imgRes),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(152.dp)
-                    .offset(y = (-36).dp)
+                    .size(currentMainImage.size)
+                    .offset(y = currentMainImage.offset)
                     .zIndex(3f)
             )
         }

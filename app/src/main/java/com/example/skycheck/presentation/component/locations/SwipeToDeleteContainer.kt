@@ -70,9 +70,7 @@ fun SwipeToDeleteContainer(
             backgroundContent = {
                 DeleteBackground(swipeDismissState = state)
             },
-            content = {
-                content()
-            },
+            content = { content() },
             enableDismissFromEndToStart = true,
             enableDismissFromStartToEnd = false
         )

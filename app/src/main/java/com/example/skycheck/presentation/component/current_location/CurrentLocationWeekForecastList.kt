@@ -33,8 +33,10 @@ fun CurrentLocationWeekForecastList() {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            CurrentLocationNextDayForecastCard()
+            CurrentLocationNextDayForecastCard()
             CurrentLocationNextDayForecastCard()
             CurrentLocationNextDayForecastCard()
             CurrentLocationNextDayForecastCard()

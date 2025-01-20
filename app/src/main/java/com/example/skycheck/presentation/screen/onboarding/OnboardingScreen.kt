@@ -16,8 +16,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,11 +32,13 @@ import com.example.skycheck.R
 import com.example.skycheck.presentation.component.onboarding.OnboardingPermissionComponent
 import com.example.skycheck.presentation.component.onboarding.OnboardingStartButton
 import com.example.skycheck.presentation.route.CurrentLocation
+import com.example.skycheck.presentation.screen.current_location.CurrentLocationUiEvent
 import com.example.skycheck.presentation.screen.current_location.CurrentLocationViewModel
 import com.example.skycheck.presentation.theme.ColorBackground
 import com.example.skycheck.presentation.theme.ColorTextAction
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
+import com.example.skycheck.utils.hasLocationPermission
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -47,10 +47,9 @@ fun OnboardingScreen(
     viewModel: CurrentLocationViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    val currentUserLocation by viewModel.currentUserLocation.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.setFusedLocationProviderClient(context = context)
+        viewModel.onEvent(CurrentLocationUiEvent.OnSetFusedLocationProviderClient(context = context))
     }
 
     Scaffold(
@@ -93,15 +92,15 @@ fun OnboardingScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 OnboardingPermissionComponent()
             }
-            
+
             val requestPermissionLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.RequestMultiplePermissions(),
                 onResult = { permissions ->
                     if (permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-                        && permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+                        || permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
                     ) {
                         // I HAVE ACCESS TO LOCATION
-                        viewModel.requestLocationUpdates()
+                        navController.navigate(CurrentLocation)
                     } else {
                         // ASK FOR PERMISSION
                         val rationaleRequired = ActivityCompat.shouldShowRequestPermissionRationale(
@@ -126,31 +125,22 @@ fun OnboardingScreen(
                             ).show()
                         }
                     }
-
                 }
             )
-            
-            if (currentUserLocation != null) {
-                Text(text = currentUserLocation!!.locality)
-                Text(text = "${currentUserLocation!!.latitude} | ${currentUserLocation!!.longitude}")
-            } else {
-                Text(text = "Localização não disponível")
-            }
 
             OnboardingStartButton {
-                navController.navigate(CurrentLocation)
-//                if (viewModel.hasLocationPermission(context)) {
-////                     Grant already granted, update location
-//
-//                } else {
-////                     Request location permission
-//                    requestPermissionLauncher.launch(
-//                        arrayOf(
-//                            Manifest.permission.ACCESS_FINE_LOCATION,
-//                            Manifest.permission.ACCESS_COARSE_LOCATION
-//                        )
-//                    )
-//                }
+                if (hasLocationPermission(context)) {
+                    // Grant already granted, update location
+                    navController.navigate(CurrentLocation)
+                } else {
+                    // Request location permission
+                    requestPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                }
             }
         }
     }

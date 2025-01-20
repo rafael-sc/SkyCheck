@@ -10,13 +10,14 @@ data class ForecastDto(
     @SerializedName("dt") val datetime: Long,
     val sys: SystemInfo,
     val timezone: Int,
-    @SerializedName("name") val localityName: Long,
+    @SerializedName("name") val localityName: String,
     val cod: Int,
-    @SerializedName("dt_txt") val datetimeText: String = ""
+    @SerializedName("dt_txt") val datetimeText: String?
 ) {
     data class Weather(
         val main: String,
         val description: String,
+        val icon: String,
     )
 
     data class MainForecast(

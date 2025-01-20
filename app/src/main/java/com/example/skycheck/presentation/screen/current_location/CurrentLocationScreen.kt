@@ -1,57 +1,79 @@
 package com.example.skycheck.presentation.screen.current_location
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.skycheck.data.model.mock.locationsPageMock
 import com.example.skycheck.presentation.component.current_location.CurrentLocationBottomBar
 import com.example.skycheck.presentation.component.current_location.CurrentLocationPage
 import com.example.skycheck.presentation.route.Locations
 import com.example.skycheck.presentation.theme.ColorBackground
+import com.example.skycheck.utils.LoadingBox
 import org.koin.androidx.compose.koinViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CurrentLocationScreen(
     navController: NavController,
     viewModel: CurrentLocationViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
+    val pagerState = rememberPagerState(initialPage = 0) { uiState.userLocations.size }
 
-    val pagerState = rememberPagerState(initialPage = 0) { locationsPageMock.size }
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(CurrentLocationUiEvent.OnRequestCurrentLocation)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = ColorBackground,
         bottomBar = {
             CurrentLocationBottomBar(
-                pagesSize = locationsPageMock.size,
+                pagesSize = uiState.userLocations.size,
                 selectedPage = pagerState.currentPage,
+                isLoadingLocations = uiState.isLoadingLocations,
                 onLocationsClick = {
                     navController.navigate(Locations)
                 }
             )
         }
     ) { innerPadding ->
-        HorizontalPager(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            state = pagerState
-        ) {
-            CurrentLocationPage(
-                locationPage = locationsPageMock[pagerState.currentPage],
-            )
+//        if (uiState.isLoadingLocations || uiState.isFetchingForecast) {
+        if (uiState.isLoadingLocations) {
+            LoadingBox()
+        } else {
+            if (uiState.currentForecastData != null) {
+                HorizontalPager(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    state = pagerState
+                ) {
+                    CurrentLocationPage(
+                        location = uiState.userLocations[pagerState.currentPage],
+                        forecastData = uiState.currentForecastData!!,
+                        currentMainImage = uiState.currentMainImageForecast!!
+                    )
+                }
+            }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
 @Composable
 fun CurrentLocationScreenPreview() {

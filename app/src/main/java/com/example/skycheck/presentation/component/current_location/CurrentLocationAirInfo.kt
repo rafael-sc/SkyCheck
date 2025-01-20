@@ -16,9 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.skycheck.R
+import com.example.skycheck.data.model.dto.ForecastDto
 
 @Composable
-fun CurrentLocationAirInfo(modifier: Modifier = Modifier) {
+fun CurrentLocationAirInfo(
+    modifier: Modifier = Modifier,
+    forecastData: ForecastDto
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -31,19 +35,19 @@ fun CurrentLocationAirInfo(modifier: Modifier = Modifier) {
         CurrentLocationForecastItem(
             iconRes = R.drawable.ic_wind,
             label = stringResource(id = R.string.vento),
-            value = "9km/h"
+            value = stringResource(id = R.string.valor_km, forecastData.wind.speed.toInt())
         )
         Spacer(modifier = Modifier.width(24.dp))
         CurrentLocationForecastItem(
             iconRes = R.drawable.ic_so2,
             label = stringResource(id = R.string.umidade),
-            value = "35%"
+            value = stringResource(id = R.string.valor_porcentagem, forecastData.main.humidity)
         )
         Spacer(modifier = Modifier.width(24.dp))
         CurrentLocationForecastItem(
             iconRes = R.drawable.ic_air_quality_header,
             label = stringResource(id = R.string.nuvens),
-            value = "75%"
+            value = stringResource(id = R.string.valor_porcentagem, forecastData.clouds.all)
         )
     }
 }

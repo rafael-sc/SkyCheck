@@ -10,4 +10,5 @@ data class Location(
     val locality: String,
     val latitude: Double,
     val longitude: Double,
+    val isCurrentUserLocality: Boolean
 )

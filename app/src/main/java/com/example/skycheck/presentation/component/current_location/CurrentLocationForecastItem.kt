@@ -20,11 +20,13 @@ import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
 
 @Composable
 fun CurrentLocationForecastItem(
+    modifier: Modifier = Modifier,
     @DrawableRes iconRes: Int,
     label: String,
     value: String
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {

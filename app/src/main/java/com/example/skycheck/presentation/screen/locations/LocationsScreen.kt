@@ -18,11 +18,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,8 +36,10 @@ import com.example.skycheck.data.model.entity.Location
 import com.example.skycheck.presentation.component.locations.LocationCard
 import com.example.skycheck.presentation.component.locations.SearchInput
 import com.example.skycheck.presentation.component.locations.SwipeToDeleteContainer
+import com.example.skycheck.presentation.screen.current_location.CurrentLocationUiEvent
 import com.example.skycheck.presentation.theme.ColorBackground
 import com.example.skycheck.presentation.theme.ColorTextPrimary
+import com.example.skycheck.utils.LoadingBox
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -43,8 +47,15 @@ fun LocationsScreen(
     navController: NavController,
     viewModel: LocationsViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val searchedLocationQuery by viewModel.searchedLocationQuery.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(LocationsUiEvent.OnSetFusedLocationProviderClient(context = context))
+        viewModel.onEvent(LocationsUiEvent.OnRequestCurrentLocation)
+        viewModel.onEvent(LocationsUiEvent.OnGetLocations)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -103,7 +114,8 @@ fun LocationsScreen(
                                                 location = Location(
                                                     locality = location.name,
                                                     latitude = location.lat,
-                                                    longitude = location.lon
+                                                    longitude = location.lon,
+                                                    isCurrentUserLocality = false
                                                 )
                                             )
                                         )
@@ -116,48 +128,33 @@ fun LocationsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (!uiState.userLocations.isNullOrEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(
-                        items = uiState.userLocations!!,
-                        key = { it.id ?: 0 }
-                    ) { location ->
-                        SwipeToDeleteContainer(
-                            location = location,
-                            onDelete = {
-                                viewModel.onEvent(LocationsUiEvent.OnDeleteLocation(location = location))
-                            },
-                            content = { LocationCard(location = location) }
-                        )
+            if (uiState.isLoadingLocations) {
+                LoadingBox()
+            } else {
+                if (uiState.userLocations.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(
+                            items = uiState.userLocations,
+                            key = { it.id ?: 0 }
+                        ) { location ->
+                            if (location.id == null) {
+                                LocationCard(location = location)
+                            } else {
+                                SwipeToDeleteContainer(
+                                    location = location,
+                                    onDelete = {
+                                        viewModel.onEvent(LocationsUiEvent.OnDeleteLocation(location = location))
+                                    },
+                                    content = { LocationCard(location = location) }
+                                )
+                            }
+                        }
                     }
                 }
-            } else {
-                Text(text = "Nenhuma localização para exibir")
             }
-
-//            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                LocationCard( // ensolarado
-//
-//                )
-//                LocationCard( // sol e nuvens
-//
-//                )
-//                LocationCard( // nublado
-//
-//                )
-//                LocationCard( // chuva
-//
-//                )
-//                LocationCard( // tempestade
-//
-//                )
-//                LocationCard( // neve
-//
-//                )
-//            }
         }
     }
 }

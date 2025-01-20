@@ -5,6 +5,6 @@ import com.example.skycheck.presentation.screen.locations.LocationsViewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    single { CurrentLocationViewModel() }
+    single { CurrentLocationViewModel(get(), get()) }
     single { LocationsViewModel(get(), get()) }
 }

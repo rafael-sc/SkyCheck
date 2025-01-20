@@ -16,5 +16,5 @@ interface LocationDao {
     suspend fun deleteLocation(location: Location)
 
     @Query("SELECT * FROM location")
-    suspend fun getLocations(): List<Location>
+    fun getLocations(): Flow<List<Location>>
 }

@@ -1,11 +1,21 @@
 package com.example.skycheck.presentation.screen.locations
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.skycheck.data.model.dao.LocationDao
 import com.example.skycheck.data.model.entity.Location
 import com.example.skycheck.data.repository_impl.OpenWeatherRepositoryImpl
+import com.example.skycheck.utils.formUserLocationsList
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -22,6 +32,7 @@ class LocationsViewModel(
 ) : ViewModel() {
     val uiState = MutableStateFlow(LocationsUiState())
     val searchedLocationQuery = MutableStateFlow("")
+    private var _fusedLocationClient: FusedLocationProviderClient? = null
 
     @OptIn(FlowPreview::class)
     val geocodeLocations = searchedLocationQuery
@@ -34,7 +45,6 @@ class LocationsViewModel(
         .launchIn(viewModelScope)
 
     init {
-        onEvent(event = LocationsUiEvent.OnGetLocations)
         searchedLocationQuery.update { "" }
     }
 
@@ -44,7 +54,13 @@ class LocationsViewModel(
             is LocationsUiEvent.OnDeleteLocation -> onDeleteLocation(event.location)
             LocationsUiEvent.OnGetLocations -> onGetLocations()
             is LocationsUiEvent.OnSaveLocation -> onSaveLocation(event.location)
+            LocationsUiEvent.OnRequestCurrentLocation -> requestCurrentLocation()
+            is LocationsUiEvent.OnSetFusedLocationProviderClient -> setFusedLocationProviderClient(event.context)
         }
+    }
+
+    private fun setFusedLocationProviderClient(context: Context) {
+        _fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     }
 
     private fun onDeleteLocation(location: Location) {
@@ -52,7 +68,7 @@ class LocationsViewModel(
             try {
                 uiState.update { currentState ->
                     currentState.copy(
-                        userLocations = currentState.userLocations?.minus(location)
+                        userLocations = currentState.userLocations.minus(location)
                     )
                 }
                 locationDao.deleteLocation(location)
@@ -65,18 +81,26 @@ class LocationsViewModel(
     private fun onGetLocations() {
         viewModelScope.launch {
             try {
-                uiState.update {
-                    it.copy(
-                        userLocations = locationDao.getLocations()
-                    )
+                locationDao.getLocations().collect { locations ->
+                    uiState.update {
+                        it.copy(
+                            userLocations = locations,
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 uiState.update {
                     it.copy(
-                        userLocations = emptyList()
+                        userLocations = emptyList(),
                     )
                 }
-                Log.e("deleteLocation", "Error when deleting location: ${e.printStackTrace()}")
+                Log.e("currentLocation", "Error when fetching user locations: ${e.printStackTrace()}")
+            } finally {
+                uiState.update {
+                    it.copy(
+                        isLoadingLocations = false
+                    )
+                }
             }
         }
     }
@@ -89,7 +113,7 @@ class LocationsViewModel(
                 uiState.update { currentState ->
                     currentState.copy(
                         geocodeLocations = emptyList(),
-                        userLocations = currentState.userLocations?.plus(location)
+                        userLocations = currentState.userLocations.plus(location)
                     )
                 }
                 searchedLocationQuery.update { "" }
@@ -101,6 +125,47 @@ class LocationsViewModel(
 
     private fun onChangeLocation(value: String) {
         searchedLocationQuery.update { value }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestCurrentLocation() {
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                locationResult.lastLocation?.let {
+                    val location = Location(
+                        locality = "Meu Local",
+                        latitude = it.latitude,
+                        longitude = it.longitude,
+                        isCurrentUserLocality = true
+                    )
+                    // Atualiza a localização no ViewModel
+                    uiState.update { currentUiState ->
+                        currentUiState.copy(
+                            currentUserLocation = location,
+                            userLocations = formUserLocationsList(
+                                currentUserLocation = location,
+                                userLocations = currentUiState.userLocations
+                            )
+                        )
+                    }
+//                    getForecastForCurrentLocation(location = location)
+                }
+                // Remove as atualizações de localização após obter a primeira
+                _fusedLocationClient?.removeLocationUpdates(this)
+            }
+        }
+
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            1000
+        ).build()
+
+        _fusedLocationClient?.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     private fun searchLocations(value: String) {
