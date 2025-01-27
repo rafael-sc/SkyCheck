@@ -36,7 +36,6 @@ import com.example.skycheck.data.model.entity.Location
 import com.example.skycheck.presentation.component.locations.LocationCard
 import com.example.skycheck.presentation.component.locations.SearchInput
 import com.example.skycheck.presentation.component.locations.SwipeToDeleteContainer
-import com.example.skycheck.presentation.screen.current_location.CurrentLocationUiEvent
 import com.example.skycheck.presentation.theme.ColorBackground
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 import com.example.skycheck.utils.LoadingBox
@@ -53,7 +52,6 @@ fun LocationsScreen(
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(LocationsUiEvent.OnSetFusedLocationProviderClient(context = context))
-        viewModel.onEvent(LocationsUiEvent.OnRequestCurrentLocation)
         viewModel.onEvent(LocationsUiEvent.OnGetLocations)
     }
 

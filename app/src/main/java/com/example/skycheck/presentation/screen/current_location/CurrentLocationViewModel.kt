@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.skycheck.data.model.dao.LocationDao
+import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.entity.Location
 import com.example.skycheck.data.repository_impl.OpenWeatherRepositoryImpl
 import com.example.skycheck.utils.formUserLocationsList
@@ -18,6 +19,8 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -29,13 +32,8 @@ class CurrentLocationViewModel(
     val uiState = MutableStateFlow(CurrentLocationUiState())
     private var _fusedLocationClient: FusedLocationProviderClient? = null
 
-    init {
-        getUserLocations()
-    }
-
     fun onEvent(event: CurrentLocationUiEvent) {
         when (event) {
-            is CurrentLocationUiEvent.OnGetCurrentForecast -> getForecastForCurrentLocation(location = event.location)
             is CurrentLocationUiEvent.OnRequestCurrentLocation -> requestCurrentLocation()
             CurrentLocationUiEvent.OnGetUserLocations -> getUserLocations()
             is CurrentLocationUiEvent.OnSetFusedLocationProviderClient -> setFusedLocationProviderClient(
@@ -67,10 +65,10 @@ class CurrentLocationViewModel(
                             userLocations = formUserLocationsList(
                                 currentUserLocation = location,
                                 userLocations = currentUiState.userLocations
-                            )
+                            ),
+                            isLoadingLocations = false
                         )
                     }
-                    getForecastForCurrentLocation(location = location)
                 }
                 // Remove as atualizações de localização após obter a primeira
                 _fusedLocationClient?.removeLocationUpdates(this)
@@ -90,14 +88,53 @@ class CurrentLocationViewModel(
     }
 
     private fun getUserLocations() {
-        Log.d("loading", "Start getting user locations")
         viewModelScope.launch {
             try {
-                locationDao.getLocations().collect { locations ->
-                    uiState.update {
-                        it.copy(userLocations = locations)
+                locationDao.getLocations()
+                    .onEach { locations ->
+                        Log.d(
+                            "currentLocation",
+                            "getUserLocations - try -> list daoLocations size: ${locations.size}"
+                        )
+                        uiState.update { currentUiState ->
+                            currentUiState.copy(
+                                userLocations = locations,
+                            )
+                        }
+                    }.launchIn(this)
+
+                requestCurrentLocation()
+
+                Log.d(
+                    "currentLocation",
+                    "getUserLocations - try -> list userLocations size: ${uiState.value.userLocations.size}"
+                )
+
+                val locationsForecasts = mutableMapOf<Int?, ForecastDto?>()
+
+                // fetching forecast data for current location
+                uiState.value.userLocations.onEach { location ->
+                    val forecastResult = getForecastForLocation(location = location)
+                    forecastResult.onSuccess { forecastData ->
+                        locationsForecasts[location.id] = forecastData
+                    }
+                    forecastResult.onFailure {
+                        locationsForecasts[location.id] = null
                     }
                 }
+
+                uiState.update { currentUiState ->
+                    currentUiState.copy(locationsForecasts = locationsForecasts)
+                }
+
+                Log.d(
+                    "currentLocation",
+                    "getUserLocations - try -> map locationsForecasts viewModel size: ${locationsForecasts.size}"
+                )
+                Log.d(
+                    "currentLocation",
+                    "getUserLocations - try -> map locationsForecasts size: ${uiState.value.locationsForecasts.size}"
+                )
             } catch (e: Exception) {
                 uiState.update {
                     it.copy(
@@ -108,42 +145,29 @@ class CurrentLocationViewModel(
                     "currentLocation",
                     "Error when fetching user locations: ${e.printStackTrace()}"
                 )
-            } finally {
-                Log.d("loading", "Stop loading locations")
-                uiState.update { it.copy(isLoadingLocations = false) }
             }
         }
     }
 
-    private fun getForecastForCurrentLocation(location: Location) {
-        viewModelScope.launch {
-            uiState.update { it.copy(isFetchingForecast = true) }
-            try {
-                val response = openWeatherRepository.getCurrentForecast(
-                    lat = location.latitude,
-                    lng = location.latitude,
+    private suspend fun getForecastForLocation(location: Location): Result<ForecastDto> {
+        return try {
+            val response = openWeatherRepository.getCurrentForecast(
+                lat = location.latitude,
+                lng = location.latitude,
+            )
+            if (response.isSuccessful) {
+                Log.i("currentForecast", "Success when fetching forecast: ${response.body()}")
+                Result.success(response.body()!!)
+            } else {
+                Log.e(
+                    "currentForecast",
+                    "Error when fetching forecast: ${response.errorBody()}"
                 )
-                if (response.isSuccessful) {
-                    Log.i("currentForecast", "Success when fetching forecast: ${response.body()}")
-                    uiState.update { currentState ->
-                        currentState.copy(
-                            currentForecastData = response.body(),
-                            currentMainImageForecast = getImageOfForecast(
-                                openWeatherIconId = response.body()?.weather?.get(0)?.icon ?: ""
-                            )
-                        )
-                    }
-                } else {
-                    Log.e(
-                        "currentForecast",
-                        "Error when fetching forecast: ${response.errorBody()}"
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("currentForecast", "Exception -> error when fetching forecast: ${e.cause}")
-            } finally {
-                uiState.update { it.copy(isFetchingForecast = false) }
+                Result.failure(exception = Throwable(message = "Error when fetching forecast"))
             }
+        } catch (e: Exception) {
+            Log.e("currentForecast", "Exception -> error when fetching forecast: ${e.cause}")
+            Result.failure(e)
         }
     }
 }

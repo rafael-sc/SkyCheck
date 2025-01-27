@@ -45,12 +45,12 @@ import com.example.skycheck.utils.capitalizeSentence
 import com.example.skycheck.utils.convertKelvinToCelsius
 import com.example.skycheck.utils.formatCurrentDate
 import com.example.skycheck.utils.getDayOfWeek
+import com.example.skycheck.utils.getImageOfForecast
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CurrentLocationMainCardForecast(
-    forecastData: ForecastDto,
-    currentMainImage: MainImageForecastDimensions
+    forecastData: ForecastDto?
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -76,7 +76,7 @@ fun CurrentLocationMainCardForecast(
             ) {
                 Column {
                     Text(
-                        text = capitalizeSentence(forecastData.weather[0].description),
+                        text = if (forecastData == null) "--" else capitalizeSentence(forecastData.weather[0].description),
                         color = ColorTextSecondary,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -99,10 +99,12 @@ fun CurrentLocationMainCardForecast(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(
-                        id = R.string.valor_temperatura,
-                        convertKelvinToCelsius(forecastData.main.temp)
-                    ),
+                    text = forecastData?.main?.temp?.let {
+                        stringResource(
+                            id = R.string.valor_temperatura,
+                            convertKelvinToCelsius(it)
+                        )
+                    } ?: "--",
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 72.sp,
@@ -114,10 +116,12 @@ fun CurrentLocationMainCardForecast(
                     modifier = Modifier.height(72.dp)
                 )
                 Text(
-                    text = stringResource(
-                        id = R.string.sensacao_termica,
-                        convertKelvinToCelsius(forecastData.main.feelsLike)
-                    ),
+                    text = forecastData?.main?.feelsLike?.let {
+                        stringResource(
+                            id = R.string.sensacao_termica,
+                            convertKelvinToCelsius(it)
+                        )
+                    } ?: "--",
                     color = ColorTextSecondaryVariant,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -127,24 +131,28 @@ fun CurrentLocationMainCardForecast(
                 ) {
                     CurrentLocationColumnMaxMinTemp(
                         icon = Icons.Default.ArrowDropDown,
-                        value = convertKelvinToCelsius(forecastData.main.minTemperature)
+                        value = if (forecastData == null) 0 else convertKelvinToCelsius(forecastData.main.minTemperature)
                     )
                     CurrentLocationColumnMaxMinTemp(
                         icon = Icons.Default.ArrowDropUp,
-                        value = convertKelvinToCelsius(forecastData.main.maxTemperature)
+                        value = if (forecastData == null) 0 else convertKelvinToCelsius(forecastData.main.maxTemperature)
                     )
                 }
             }
         }
-        Box(modifier = Modifier.padding(horizontal = if (currentMainImage.hasHorizontalPadding) 20.dp else 0.dp)) {
-            Image(
-                painter = painterResource(id = currentMainImage.imgRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(currentMainImage.size)
-                    .offset(y = currentMainImage.offset)
-                    .zIndex(3f)
-            )
+
+        if (forecastData != null) {
+            val currentMainImage = getImageOfForecast(forecastData.weather[0].icon)
+            Box(modifier = Modifier.padding(horizontal = if (currentMainImage.hasHorizontalPadding) 20.dp else 0.dp)) {
+                Image(
+                    painter = painterResource(id = currentMainImage.imgRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(currentMainImage.size)
+                        .offset(y = currentMainImage.offset)
+                        .zIndex(3f)
+                )
+            }
         }
     }
 }

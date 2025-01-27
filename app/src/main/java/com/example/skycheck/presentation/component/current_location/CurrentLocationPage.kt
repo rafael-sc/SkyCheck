@@ -18,8 +18,7 @@ import com.example.skycheck.presentation.screen.current_location.MainImageForeca
 @Composable
 fun CurrentLocationPage(
     location: Location,
-    forecastData: ForecastDto,
-    currentMainImage: MainImageForecastDimensions
+    forecastData: ForecastDto?,
 ) {
     Column(
         modifier = Modifier
@@ -28,10 +27,7 @@ fun CurrentLocationPage(
     ) {
         CurrentLocationHeaderLocality(locality = location.locality)
         Spacer(modifier = Modifier.height(28.dp))
-        CurrentLocationMainCardForecast(
-            forecastData = forecastData,
-            currentMainImage = currentMainImage
-        )
+        CurrentLocationMainCardForecast(forecastData = forecastData)
         Spacer(modifier = Modifier.height(20.dp))
         CurrentLocationSunriseAndSunset(forecastData = forecastData)
         Spacer(modifier = Modifier.height(20.dp))

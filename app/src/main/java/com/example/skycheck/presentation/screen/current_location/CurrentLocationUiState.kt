@@ -4,10 +4,9 @@ import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.entity.Location
 
 data class CurrentLocationUiState(
-    val isLoadingLocations: Boolean = false,
-    val isFetchingForecast: Boolean = false,
+    val isLoadingLocations: Boolean = true,
     val userLocations: List<Location> = emptyList(),
-    val currentForecastData: ForecastDto? = null,
+    val locationsForecasts: Map<Int?, ForecastDto?> = emptyMap(),
     val currentUserLocation: Location? = null,
     val currentMainImageForecast: MainImageForecastDimensions? = null
 )

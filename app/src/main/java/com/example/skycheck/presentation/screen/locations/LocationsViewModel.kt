@@ -55,7 +55,9 @@ class LocationsViewModel(
             LocationsUiEvent.OnGetLocations -> onGetLocations()
             is LocationsUiEvent.OnSaveLocation -> onSaveLocation(event.location)
             LocationsUiEvent.OnRequestCurrentLocation -> requestCurrentLocation()
-            is LocationsUiEvent.OnSetFusedLocationProviderClient -> setFusedLocationProviderClient(event.context)
+            is LocationsUiEvent.OnSetFusedLocationProviderClient -> setFusedLocationProviderClient(
+                event.context
+            )
         }
     }
 
@@ -66,12 +68,15 @@ class LocationsViewModel(
     private fun onDeleteLocation(location: Location) {
         viewModelScope.launch {
             try {
-                uiState.update { currentState ->
-                    currentState.copy(
-                        userLocations = currentState.userLocations.minus(location)
-                    )
-                }
+                Log.d("locations", "Current locations: ${uiState.value.userLocations}")
+//                uiState.update { currentState ->
+//                    currentState.copy(
+//                        userLocations = currentState.userLocations.minus(location)
+//                    )
+//                }
                 locationDao.deleteLocation(location)
+                Log.d("locations", "Locations after update: ${uiState.value.userLocations}")
+
             } catch (e: Exception) {
                 Log.e("deleteLocation", "Error when deleting location: ${e.printStackTrace()}")
             }
@@ -81,26 +86,25 @@ class LocationsViewModel(
     private fun onGetLocations() {
         viewModelScope.launch {
             try {
-                locationDao.getLocations().collect { locations ->
-                    uiState.update {
-                        it.copy(
-                            userLocations = locations,
-                        )
-                    }
-                }
+                locationDao.getLocations()
+                    .onEach { locations ->
+                        uiState.update { currentUiState ->
+                            currentUiState.copy(
+                                userLocations = locations,
+                            )
+                        }
+                    }.launchIn(this)
+                requestCurrentLocation()
             } catch (e: Exception) {
                 uiState.update {
                     it.copy(
                         userLocations = emptyList(),
                     )
                 }
-                Log.e("currentLocation", "Error when fetching user locations: ${e.printStackTrace()}")
-            } finally {
-                uiState.update {
-                    it.copy(
-                        isLoadingLocations = false
-                    )
-                }
+                Log.e(
+                    "currentLocation",
+                    "Error when fetching user locations: ${e.printStackTrace()}"
+                )
             }
         }
     }
@@ -145,11 +149,11 @@ class LocationsViewModel(
                             currentUserLocation = location,
                             userLocations = formUserLocationsList(
                                 currentUserLocation = location,
-                                userLocations = currentUiState.userLocations
-                            )
+                                userLocations = currentUiState.userLocations,
+                            ),
+                            isLoadingLocations = false,
                         )
                     }
-//                    getForecastForCurrentLocation(location = location)
                 }
                 // Remove as atualizações de localização após obter a primeira
                 _fusedLocationClient?.removeLocationUpdates(this)

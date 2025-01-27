@@ -24,7 +24,7 @@ fun CurrentLocationColumnMaxMinTemp(
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = stringResource(id = R.string.valor_temperatura, value),
+            text = if (value == 0) "--" else stringResource(id = R.string.valor_temperatura, value),
             color = ColorTextSecondaryVariant,
             style = MaterialTheme.typography.headlineMedium.copy(
                 brush = Brush.linearGradient(

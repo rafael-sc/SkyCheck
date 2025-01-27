@@ -33,9 +33,9 @@ fun CurrentLocationScreen(
     val uiState by viewModel.uiState.collectAsState()
     val pagerState = rememberPagerState(initialPage = 0) { uiState.userLocations.size }
 
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(CurrentLocationUiEvent.OnRequestCurrentLocation)
-    }
+//    LaunchedEffect(Unit) {
+//        viewModel.onEvent(CurrentLocationUiEvent.OnGetUserLocations)
+//    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -51,21 +51,20 @@ fun CurrentLocationScreen(
             )
         }
     ) { innerPadding ->
-//        if (uiState.isLoadingLocations || uiState.isFetchingForecast) {
         if (uiState.isLoadingLocations) {
             LoadingBox()
         } else {
-            if (uiState.currentForecastData != null) {
+            if (uiState.locationsForecasts.isNotEmpty()) {
                 HorizontalPager(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
                     state = pagerState
                 ) {
+                    val currentLocation = uiState.userLocations[pagerState.currentPage]
                     CurrentLocationPage(
-                        location = uiState.userLocations[pagerState.currentPage],
-                        forecastData = uiState.currentForecastData!!,
-                        currentMainImage = uiState.currentMainImageForecast!!
+                        location = currentLocation,
+                        forecastData = uiState.locationsForecasts[currentLocation.id]
                     )
                 }
             }

@@ -26,7 +26,7 @@ import com.example.skycheck.utils.formatTimestampToTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CurrentLocationSunriseAndSunset(forecastData: ForecastDto) {
+fun CurrentLocationSunriseAndSunset(forecastData: ForecastDto?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,7 +39,8 @@ fun CurrentLocationSunriseAndSunset(forecastData: ForecastDto) {
         CurrentLocationForecastItem(
             iconRes = R.drawable.sunrise,
             label = stringResource(id = R.string.nascer_do_sol),
-            value = stringResource(id = R.string.hora, formatTimestampToTime(forecastData.sys.sunrise))
+            value = forecastData?.sys?.sunrise?.let
+            { stringResource(id = R.string.hora, formatTimestampToTime(it)) } ?: "--"
         )
         Spacer(Modifier.width(20.dp))
         Image(
@@ -51,7 +52,8 @@ fun CurrentLocationSunriseAndSunset(forecastData: ForecastDto) {
         CurrentLocationForecastItem(
             iconRes = R.drawable.sunset,
             label = stringResource(id = R.string.por_do_sol),
-            value = stringResource(id = R.string.hora, formatTimestampToTime(forecastData.sys.sunset))
+            value = forecastData?.sys?.sunset?.let
+            { stringResource(id = R.string.hora, formatTimestampToTime(it)) } ?: "--"
         )
     }
 }

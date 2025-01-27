@@ -21,7 +21,7 @@ import com.example.skycheck.data.model.dto.ForecastDto
 @Composable
 fun CurrentLocationAirInfo(
     modifier: Modifier = Modifier,
-    forecastData: ForecastDto
+    forecastData: ForecastDto?
 ) {
     Row(
         modifier = modifier
@@ -35,19 +35,22 @@ fun CurrentLocationAirInfo(
         CurrentLocationForecastItem(
             iconRes = R.drawable.ic_wind,
             label = stringResource(id = R.string.vento),
-            value = stringResource(id = R.string.valor_km, forecastData.wind.speed.toInt())
+            value = forecastData?.wind?.speed?.toInt()
+                ?.let { stringResource(id = R.string.valor_km, it) } ?: "--"
         )
         Spacer(modifier = Modifier.width(24.dp))
         CurrentLocationForecastItem(
             iconRes = R.drawable.ic_so2,
             label = stringResource(id = R.string.umidade),
-            value = stringResource(id = R.string.valor_porcentagem, forecastData.main.humidity)
+            value = forecastData?.main?.humidity
+                ?.let { stringResource(id = R.string.valor_porcentagem, it) } ?: "--"
         )
         Spacer(modifier = Modifier.width(24.dp))
         CurrentLocationForecastItem(
             iconRes = R.drawable.ic_air_quality_header,
             label = stringResource(id = R.string.nuvens),
-            value = stringResource(id = R.string.valor_porcentagem, forecastData.clouds.all)
+            value = forecastData?.clouds?.all
+                ?.let { stringResource(id = R.string.valor_porcentagem, it) } ?: "--"
         )
     }
 }
