@@ -9,10 +9,10 @@ import androidx.annotation.RequiresApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.skycheck.presentation.route.CurrentLocation
+import com.example.skycheck.presentation.route.Forecasts
 import com.example.skycheck.presentation.route.Locations
 import com.example.skycheck.presentation.route.Onboarding
-import com.example.skycheck.presentation.screen.current_location.CurrentLocationScreen
+import com.example.skycheck.presentation.screen.forecasts.CurrentLocationScreen
 import com.example.skycheck.presentation.screen.locations.LocationsScreen
 import com.example.skycheck.presentation.screen.onboarding.OnboardingScreen
 import com.example.skycheck.presentation.theme.SkyCheckTheme
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     composable<Locations> {
                         LocationsScreen(navController = navController)
                     }
-                    composable<CurrentLocation> {
+                    composable<Forecasts> {
                         CurrentLocationScreen(navController = navController)
                     }
                 }

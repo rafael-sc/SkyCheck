@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import com.example.skycheck.presentation.theme.ColorPagerInactive
 import com.example.skycheck.presentation.theme.ColorTextAction
 
 @Composable
-fun CurrentLocationPageIndicator(
+fun ForecastsPageIndicator(
     pagesSize: Int,
     selectedPage: Int
 ) {

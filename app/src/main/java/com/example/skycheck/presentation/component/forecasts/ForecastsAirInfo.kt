@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import com.example.skycheck.R
 import com.example.skycheck.data.model.dto.ForecastDto
 
 @Composable
-fun CurrentLocationAirInfo(
+fun ForecastsAirInfo(
     modifier: Modifier = Modifier,
     forecastData: ForecastDto?
 ) {
@@ -32,21 +32,21 @@ fun CurrentLocationAirInfo(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        CurrentLocationForecastItem(
+        ForecastsForecastItem(
             iconRes = R.drawable.ic_wind,
             label = stringResource(id = R.string.vento),
             value = forecastData?.wind?.speed?.toInt()
                 ?.let { stringResource(id = R.string.valor_km, it) } ?: "--"
         )
         Spacer(modifier = Modifier.width(24.dp))
-        CurrentLocationForecastItem(
+        ForecastsForecastItem(
             iconRes = R.drawable.ic_so2,
             label = stringResource(id = R.string.umidade),
             value = forecastData?.main?.humidity
                 ?.let { stringResource(id = R.string.valor_porcentagem, it) } ?: "--"
         )
         Spacer(modifier = Modifier.width(24.dp))
-        CurrentLocationForecastItem(
+        ForecastsForecastItem(
             iconRes = R.drawable.ic_air_quality_header,
             label = stringResource(id = R.string.nuvens),
             value = forecastData?.clouds?.all

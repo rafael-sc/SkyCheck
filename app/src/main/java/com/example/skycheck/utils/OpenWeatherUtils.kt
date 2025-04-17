@@ -1,7 +1,7 @@
 package com.example.skycheck.utils
 
-import com.example.skycheck.presentation.screen.current_location.MainCardImageDimensions
-import com.example.skycheck.presentation.screen.current_location.MainImageForecastDimensions
+import com.example.skycheck.presentation.screen.forecasts.MainCardImageDimensions
+import com.example.skycheck.presentation.screen.forecasts.MainImageForecastDimensions
 
 fun getImageOfForecast(openWeatherIconId: String): MainImageForecastDimensions {
     return when (openWeatherIconId) {

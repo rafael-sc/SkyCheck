@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 
 @Composable
-fun CurrentLocationBottomBar(
+fun ForecastsBottomBar(
     pagesSize: Int,
     selectedPage: Int,
     isLoadingLocations: Boolean,
@@ -35,7 +35,7 @@ fun CurrentLocationBottomBar(
         if (isLoadingLocations) {
             DotsAnimation()
         } else {
-            CurrentLocationPageIndicator(
+            ForecastsPageIndicator(
                 pagesSize = pagesSize,
                 selectedPage = selectedPage
             )

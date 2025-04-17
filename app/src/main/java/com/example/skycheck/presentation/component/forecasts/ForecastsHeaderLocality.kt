@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -23,7 +23,7 @@ import com.example.skycheck.presentation.theme.ColorTextAction
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 
 @Composable
-fun CurrentLocationHeaderLocality(
+fun ForecastsHeaderLocality(
     locality: String
 ) {
     Row(

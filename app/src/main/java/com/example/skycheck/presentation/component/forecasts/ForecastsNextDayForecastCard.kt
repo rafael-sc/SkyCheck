@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,7 +31,7 @@ import com.example.skycheck.presentation.theme.MaxTemperature
 import com.example.skycheck.presentation.theme.MinTemperature
 
 @Composable
-fun CurrentLocationNextDayForecastCard() {
+fun ForecastsNextDayForecastCard() {
     Column(
         modifier = Modifier
             .width(68.dp)
@@ -63,12 +63,12 @@ fun CurrentLocationNextDayForecastCard() {
             contentDescription = null
         )
         Column {
-            CurrentLocationRowMaxMinTemp(
+            ForecastsRowMaxMinTemp(
                 icon = Icons.Default.ArrowDropUp,
                 color = MinTemperature,
                 value = 25
             )
-            CurrentLocationRowMaxMinTemp(
+            ForecastsRowMaxMinTemp(
                 icon = Icons.Default.ArrowDropDown,
                 color = MaxTemperature,
                 value = 16

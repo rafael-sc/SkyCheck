@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.screen.current_location
+package com.example.skycheck.presentation.screen.forecasts
 
 import androidx.compose.ui.unit.dp
 import com.example.skycheck.R

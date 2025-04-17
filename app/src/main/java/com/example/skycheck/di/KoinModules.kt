@@ -5,7 +5,7 @@ import com.example.skycheck.data.api.OpenWeatherApi
 import com.example.skycheck.data.model.database.SkyCheckDatabase
 import com.example.skycheck.data.repository_impl.LocationRepositoryImpl
 import com.example.skycheck.data.repository_impl.OpenWeatherRepositoryImpl
-import com.example.skycheck.presentation.screen.current_location.CurrentLocationViewModel
+import com.example.skycheck.presentation.screen.forecasts.ForecastsViewModel
 import com.example.skycheck.presentation.screen.locations.LocationsViewModel
 import com.example.skycheck.presentation.screen.onboarding.OnboardingViewModel
 import com.example.skycheck.utils.Constants.OPEN_WEATHER_BASE_URL
@@ -30,7 +30,6 @@ val databaseModule = module {
 }
 
 val networkModule = module {
-    // OkHttpClient
     single {
         OkHttpClient.Builder()
             .cache(null)
@@ -56,7 +55,7 @@ val repositoryModule = module {
 }
 
 val viewModelModule = module {
-    single { CurrentLocationViewModel(get(), get()) }
+    single { ForecastsViewModel(get(), get()) }
     single { LocationsViewModel(get(), get()) }
     single { OnboardingViewModel() }
 }

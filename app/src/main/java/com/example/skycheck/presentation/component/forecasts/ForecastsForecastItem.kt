@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import com.example.skycheck.presentation.theme.ColorTextPrimary
 import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
 
 @Composable
-fun CurrentLocationForecastItem(
+fun ForecastsForecastItem(
     modifier: Modifier = Modifier,
     @DrawableRes iconRes: Int,
     label: String,

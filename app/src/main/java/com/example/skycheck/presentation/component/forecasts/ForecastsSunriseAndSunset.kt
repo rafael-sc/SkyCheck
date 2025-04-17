@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -26,7 +26,7 @@ import com.example.skycheck.utils.formatTimestampToTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CurrentLocationSunriseAndSunset(forecastData: ForecastDto?) {
+fun ForecastsSunriseAndSunset(forecastData: ForecastDto?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,7 +36,7 @@ fun CurrentLocationSunriseAndSunset(forecastData: ForecastDto?) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        CurrentLocationForecastItem(
+        ForecastsForecastItem(
             iconRes = R.drawable.sunrise,
             label = stringResource(id = R.string.nascer_do_sol),
             value = forecastData?.sys?.sunrise?.let
@@ -49,7 +49,7 @@ fun CurrentLocationSunriseAndSunset(forecastData: ForecastDto?) {
             modifier = Modifier.size(52.dp)
         )
         Spacer(Modifier.width(20.dp))
-        CurrentLocationForecastItem(
+        ForecastsForecastItem(
             iconRes = R.drawable.sunset,
             label = stringResource(id = R.string.por_do_sol),
             value = forecastData?.sys?.sunset?.let

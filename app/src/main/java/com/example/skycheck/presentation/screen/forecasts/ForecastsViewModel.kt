@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.screen.current_location
+package com.example.skycheck.presentation.screen.forecasts
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CurrentLocationViewModel(
+class ForecastsViewModel(
     private val openWeatherRepository: OpenWeatherRepositoryImpl,
     private val locationRepository: LocationRepositoryImpl
 ) : ViewModel() {
 
-    val uiState = MutableStateFlow(CurrentLocationUiState())
+    val uiState = MutableStateFlow(ForecastsUiState())
 
     init {
         handleLocationsAndForecast()

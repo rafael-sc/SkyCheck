@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -18,7 +18,7 @@ import com.example.skycheck.R
 import com.example.skycheck.presentation.theme.ColorTextSecondaryVariant
 
 @Composable
-fun CurrentLocationColumnMaxMinTemp(
+fun ForecastsColumnMaxMinTemp(
     icon: ImageVector,
     value: Int
 ) {

@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -17,7 +17,7 @@ import com.example.skycheck.R
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 
 @Composable
-fun CurrentLocationRowMaxMinTemp(
+fun ForecastsRowMaxMinTemp(
     icon: ImageVector,
     color: Color,
     value: Int

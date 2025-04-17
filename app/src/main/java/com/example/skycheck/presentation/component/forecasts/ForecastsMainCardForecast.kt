@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.skycheck.R
 import com.example.skycheck.data.model.dto.ForecastDto
-import com.example.skycheck.presentation.screen.current_location.MainImageForecastDimensions
 import com.example.skycheck.presentation.theme.ColorGradient1
 import com.example.skycheck.presentation.theme.ColorGradient2
 import com.example.skycheck.presentation.theme.ColorGradient3
@@ -49,7 +48,7 @@ import com.example.skycheck.utils.getImageOfForecast
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CurrentLocationMainCardForecast(
+fun ForecastsMainCardForecast(
     forecastData: ForecastDto?
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -129,11 +128,11 @@ fun CurrentLocationMainCardForecast(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    CurrentLocationColumnMaxMinTemp(
+                    ForecastsColumnMaxMinTemp(
                         icon = Icons.Default.ArrowDropDown,
                         value = if (forecastData == null) 0 else convertKelvinToCelsius(forecastData.main.minTemperature)
                     )
-                    CurrentLocationColumnMaxMinTemp(
+                    ForecastsColumnMaxMinTemp(
                         icon = Icons.Default.ArrowDropUp,
                         value = if (forecastData == null) 0 else convertKelvinToCelsius(forecastData.main.maxTemperature)
                     )

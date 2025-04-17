@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -12,11 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.entity.Location
-import com.example.skycheck.presentation.screen.current_location.MainImageForecastDimensions
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CurrentLocationPage(
+fun ForecastsPage(
     location: Location,
     forecastData: ForecastDto?,
 ) {
@@ -25,14 +24,14 @@ fun CurrentLocationPage(
             .fillMaxSize()
             .padding(24.dp),
     ) {
-        CurrentLocationHeaderLocality(locality = location.locality)
+        ForecastsHeaderLocality(locality = location.locality)
         Spacer(modifier = Modifier.height(28.dp))
-        CurrentLocationMainCardForecast(forecastData = forecastData)
+        ForecastsMainCardForecast(forecastData = forecastData)
         Spacer(modifier = Modifier.height(20.dp))
-        CurrentLocationSunriseAndSunset(forecastData = forecastData)
+        ForecastsSunriseAndSunset(forecastData = forecastData)
         Spacer(modifier = Modifier.height(20.dp))
-        CurrentLocationAirInfo(modifier = Modifier.weight(1f), forecastData = forecastData)
+        ForecastsAirInfo(modifier = Modifier.weight(1f), forecastData = forecastData)
         Spacer(modifier = Modifier.height(20.dp))
-        CurrentLocationWeekForecastList()
+        ForecastsWeekForecastList()
     }
 }

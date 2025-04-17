@@ -1,4 +1,4 @@
-package com.example.skycheck.presentation.component.current_location
+package com.example.skycheck.presentation.component.forecasts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import com.example.skycheck.R
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 
 @Composable
-fun CurrentLocationWeekForecastList() {
+fun ForecastsWeekForecastList() {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(id = R.string.proximos_dias),
@@ -35,11 +35,11 @@ fun CurrentLocationWeekForecastList() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CurrentLocationNextDayForecastCard()
-            CurrentLocationNextDayForecastCard()
-            CurrentLocationNextDayForecastCard()
-            CurrentLocationNextDayForecastCard()
-            CurrentLocationNextDayForecastCard()
+            ForecastsNextDayForecastCard()
+            ForecastsNextDayForecastCard()
+            ForecastsNextDayForecastCard()
+            ForecastsNextDayForecastCard()
+            ForecastsNextDayForecastCard()
         }
     }
 }

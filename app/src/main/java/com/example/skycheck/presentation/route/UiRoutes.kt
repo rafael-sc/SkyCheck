@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data object Onboarding
 
 @Serializable
-data object CurrentLocation
+data object Forecasts
 
 @Serializable
 data object Locations

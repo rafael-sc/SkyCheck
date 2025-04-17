@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,8 +30,7 @@ import com.example.skycheck.MainActivity
 import com.example.skycheck.R
 import com.example.skycheck.presentation.component.onboarding.OnboardingPermissionComponent
 import com.example.skycheck.presentation.component.onboarding.OnboardingStartButton
-import com.example.skycheck.presentation.route.CurrentLocation
-import com.example.skycheck.presentation.screen.current_location.CurrentLocationViewModel
+import com.example.skycheck.presentation.route.Forecasts
 import com.example.skycheck.presentation.theme.ColorBackground
 import com.example.skycheck.presentation.theme.ColorTextAction
 import com.example.skycheck.presentation.theme.ColorTextPrimary
@@ -95,7 +93,7 @@ fun OnboardingScreen(
                         || permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
                     ) {
                         // I HAVE ACCESS TO LOCATION
-                        navController.navigate(CurrentLocation)
+                        navController.navigate(Forecasts)
                     } else {
                         // ASK FOR PERMISSION
                         val rationaleRequired = ActivityCompat.shouldShowRequestPermissionRationale(
@@ -126,7 +124,7 @@ fun OnboardingScreen(
             OnboardingStartButton {
                 if (hasLocationPermission(context)) {
                     // Grant already granted, update location
-                    navController.navigate(CurrentLocation)
+                    navController.navigate(Forecasts)
                 } else {
                     // Request location permission
                     requestPermissionLauncher.launch(
