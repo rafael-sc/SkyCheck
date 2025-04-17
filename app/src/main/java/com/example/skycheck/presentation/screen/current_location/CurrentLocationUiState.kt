@@ -5,8 +5,6 @@ import com.example.skycheck.data.model.entity.Location
 
 data class CurrentLocationUiState(
     val isLoadingLocations: Boolean = true,
-    val userLocations: List<Location> = emptyList(),
-    val locationsForecasts: Map<Int?, ForecastDto?> = emptyMap(),
-    val currentUserLocation: Location? = null,
-    val currentMainImageForecast: MainImageForecastDimensions? = null
+    val userLocations: List<Location?> = emptyList(),
+    val locationsForecasts: Map<Int?, ForecastDto?> = emptyMap()
 )

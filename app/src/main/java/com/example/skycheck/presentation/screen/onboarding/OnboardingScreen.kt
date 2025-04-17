@@ -32,7 +32,6 @@ import com.example.skycheck.R
 import com.example.skycheck.presentation.component.onboarding.OnboardingPermissionComponent
 import com.example.skycheck.presentation.component.onboarding.OnboardingStartButton
 import com.example.skycheck.presentation.route.CurrentLocation
-import com.example.skycheck.presentation.screen.current_location.CurrentLocationUiEvent
 import com.example.skycheck.presentation.screen.current_location.CurrentLocationViewModel
 import com.example.skycheck.presentation.theme.ColorBackground
 import com.example.skycheck.presentation.theme.ColorTextAction
@@ -44,13 +43,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun OnboardingScreen(
     navController: NavController,
-    viewModel: CurrentLocationViewModel = koinViewModel()
+    viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-
-    LaunchedEffect(key1 = Unit) {
-        viewModel.onEvent(CurrentLocationUiEvent.OnSetFusedLocationProviderClient(context = context))
-    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

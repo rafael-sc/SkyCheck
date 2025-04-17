@@ -3,6 +3,7 @@ package com.example.skycheck.di
 import androidx.room.Room
 import com.example.skycheck.data.api.OpenWeatherApi
 import com.example.skycheck.data.model.database.SkyCheckDatabase
+import com.example.skycheck.data.repository_impl.LocationRepositoryImpl
 import com.example.skycheck.data.repository_impl.OpenWeatherRepositoryImpl
 import com.example.skycheck.presentation.screen.current_location.CurrentLocationViewModel
 import com.example.skycheck.presentation.screen.locations.LocationsViewModel
@@ -51,11 +52,15 @@ val networkModule = module {
 
 val repositoryModule = module {
     single { OpenWeatherRepositoryImpl(get()) }
+    single { LocationRepositoryImpl(get(), get()) }
 }
 
 val viewModelModule = module {
-    single { CurrentLocationViewModel(get(), get(), get()) }
+    single { CurrentLocationViewModel(get(), get()) }
     single { LocationsViewModel(get(), get()) }
     single { OnboardingViewModel() }
-    single { LocationServices.getFusedLocationProviderClient(androidContext()) }
+}
+
+val locationModule = module {
+    single { LocationServices.getFusedLocationProviderClient(androidContext().applicationContext) }
 }

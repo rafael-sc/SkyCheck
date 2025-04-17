@@ -12,7 +12,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -29,13 +28,8 @@ fun CurrentLocationScreen(
     navController: NavController,
     viewModel: CurrentLocationViewModel = koinViewModel()
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val pagerState = rememberPagerState(initialPage = 0) { uiState.userLocations.size }
-
-//    LaunchedEffect(Unit) {
-//        viewModel.onEvent(CurrentLocationUiEvent.OnGetUserLocations)
-//    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -62,10 +56,12 @@ fun CurrentLocationScreen(
                     state = pagerState
                 ) {
                     val currentLocation = uiState.userLocations[pagerState.currentPage]
-                    CurrentLocationPage(
-                        location = currentLocation,
-                        forecastData = uiState.locationsForecasts[currentLocation.id]
-                    )
+                    if (currentLocation != null) {
+                        CurrentLocationPage(
+                            location = currentLocation,
+                            forecastData = uiState.locationsForecasts[currentLocation.id]
+                        )
+                    }
                 }
             }
         }
