@@ -33,7 +33,7 @@ fun ForecastsBottomBar(
             .padding(horizontal = 16.dp)
     ) {
         if (isLoadingLocations) {
-            DotsAnimation()
+            BouncingDotsLoading()
         } else {
             ForecastsPageIndicator(
                 pagesSize = pagesSize,
