@@ -58,7 +58,8 @@ fun CurrentLocationScreen(
                     if (currentLocation != null) {
                         ForecastsPage(
                             location = currentLocation,
-                            forecastData = uiState.locationsForecasts[currentLocation.id]
+                            forecastData = uiState.locationsForecasts[currentLocation.id],
+                            nextDaysForecastList = uiState.locationsNextDaysForecasts[currentLocation.id]
                         )
                     }
                 }

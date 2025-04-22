@@ -41,17 +41,6 @@ fun formatCurrentDate(date: LocalDate): String {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getDayOfWeek(date: LocalDate): String {
-//    val formatter = DateTimeFormatter.ofPattern("ddd", Locale("pt", "BR"))
-//    return capitalizeSentence(date.format(formatter))
-    return formatDayOfTheWeek(date)
-}
-
-fun capitalizeSentence(sentence: String): String {
-    return sentence.replaceFirstChar { it.uppercase() }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-private fun formatDayOfTheWeek(date: LocalDate): String {
     return when (date.dayOfWeek!!) {
         DayOfWeek.MONDAY -> "Seg"
         DayOfWeek.TUESDAY -> "Ter"
@@ -61,4 +50,8 @@ private fun formatDayOfTheWeek(date: LocalDate): String {
         DayOfWeek.SATURDAY -> "Sab"
         DayOfWeek.SUNDAY -> "Dom"
     }
+}
+
+fun capitalizeSentence(sentence: String): String {
+    return sentence.replaceFirstChar { it.uppercase() }
 }

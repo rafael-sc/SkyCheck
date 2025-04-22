@@ -6,5 +6,6 @@ import com.example.skycheck.data.model.entity.Location
 data class ForecastsUiState(
     val isLoadingLocations: Boolean = true,
     val userLocations: List<Location?> = emptyList(),
-    val locationsForecasts: Map<Int?, ForecastDto?> = emptyMap()
+    val locationsForecasts: Map<Int?, ForecastDto?> = emptyMap(),
+    val locationsNextDaysForecasts: Map<Int?, List<ForecastDto>?> = emptyMap(),
 )

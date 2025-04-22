@@ -44,7 +44,7 @@ import com.example.skycheck.utils.capitalizeSentence
 import com.example.skycheck.utils.convertKelvinToCelsius
 import com.example.skycheck.utils.formatCurrentDate
 import com.example.skycheck.utils.getDayOfWeek
-import com.example.skycheck.utils.getImageOfForecast
+import com.example.skycheck.utils.getImageOfForecastForMainCard
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -141,7 +141,7 @@ fun ForecastsMainCardForecast(
         }
 
         if (forecastData != null) {
-            val currentMainImage = getImageOfForecast(forecastData.weather[0].icon)
+            val currentMainImage = getImageOfForecastForMainCard(forecastData.weather[0].icon)
             Box(modifier = Modifier.padding(horizontal = if (currentMainImage.hasHorizontalPadding) 20.dp else 0.dp)) {
                 Image(
                     painter = painterResource(id = currentMainImage.imgRes),

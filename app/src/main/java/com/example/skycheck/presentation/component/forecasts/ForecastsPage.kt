@@ -18,6 +18,7 @@ import com.example.skycheck.data.model.entity.Location
 fun ForecastsPage(
     location: Location,
     forecastData: ForecastDto?,
+    nextDaysForecastList: List<ForecastDto>?
 ) {
     Column(
         modifier = Modifier
@@ -32,6 +33,6 @@ fun ForecastsPage(
         Spacer(modifier = Modifier.height(20.dp))
         ForecastsAirInfo(modifier = Modifier.weight(1f), forecastData = forecastData)
         Spacer(modifier = Modifier.height(20.dp))
-        ForecastsWeekForecastList()
+        ForecastsWeekForecastList(forecastList = nextDaysForecastList)
     }
 }
