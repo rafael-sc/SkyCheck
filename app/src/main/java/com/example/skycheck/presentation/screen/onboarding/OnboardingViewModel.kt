@@ -1,22 +1,33 @@
 package com.example.skycheck.presentation.screen.onboarding
 
-import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import androidx.lifecycle.viewModelScope
+import com.example.skycheck.data.repository_impl.DataStoreRepositoryImpl
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class OnboardingViewModel() : ViewModel() {
-    private var _fusedLocationClient: FusedLocationProviderClient? = null
+class OnboardingViewModel(
+    private val dataStoreRepository: DataStoreRepositoryImpl
+) : ViewModel() {
 
-    fun onEvent(event: OnboardingUiEvent) {
-        when (event) {
-            is OnboardingUiEvent.OnSetFusedLocationProviderClient -> setFusedLocationProviderClient(
-                context = event.context
-            )
+    val isOnboardingDone = MutableStateFlow<Boolean?>(null)
+
+    init {
+        viewModelScope.launch {
+            isOnboardingDone.update { dataStoreRepository.getOnboardingDone().first() }
         }
     }
 
-    private fun setFusedLocationProviderClient(context: Context) {
-        _fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    fun onButtonClick() {
+        viewModelScope.launch {
+            try {
+                dataStoreRepository.setOnboardingDone()
+            } catch (e: Exception) {
+                Log.e("DataStore", "Something went wrong when saving info in DataStore", e)
+            }
+        }
     }
 }

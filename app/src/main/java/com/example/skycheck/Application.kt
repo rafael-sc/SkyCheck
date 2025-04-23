@@ -1,6 +1,7 @@
 package com.example.skycheck
 
 import android.app.Application
+import com.example.skycheck.di.dataStoreModule
 import com.example.skycheck.di.databaseModule
 import com.example.skycheck.di.locationModule
 import com.example.skycheck.di.networkModule
@@ -20,7 +21,8 @@ class Application : Application() {
                 repositoryModule,
                 viewModelModule,
                 databaseModule,
-                locationModule
+                locationModule,
+                dataStoreModule
             )
         }
     }
