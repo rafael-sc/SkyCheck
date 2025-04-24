@@ -1,22 +1,14 @@
 package com.example.skycheck.presentation.screen.locations
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.skycheck.data.model.dao.LocationDao
+import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.entity.Location
+import com.example.skycheck.data.repository_impl.LocationRepositoryImpl
 import com.example.skycheck.data.repository_impl.OpenWeatherRepositoryImpl
-import com.example.skycheck.utils.formUserLocationsList
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,96 +20,118 @@ import kotlinx.coroutines.launch
 
 class LocationsViewModel(
     private val openWeatherRepository: OpenWeatherRepositoryImpl,
-    private val locationDao: LocationDao
+    private val locationRepository: LocationRepositoryImpl
 ) : ViewModel() {
     val uiState = MutableStateFlow(LocationsUiState())
     val searchedLocationQuery = MutableStateFlow("")
-    private var _fusedLocationClient: FusedLocationProviderClient? = null
-
-    @OptIn(FlowPreview::class)
-    val geocodeLocations = searchedLocationQuery
-        .debounce(700)
-        .filter { it.isNotEmpty() }
-        .distinctUntilChanged() // Ignore valores iguais consecutivos
-        .onEach { query ->
-            searchLocations(query)
-        }
-        .launchIn(viewModelScope)
 
     init {
-        searchedLocationQuery.update { "" }
+        handleLocationsAndForecast()
     }
 
-    fun onEvent(event: LocationsUiEvent) {
-        when (event) {
-            is LocationsUiEvent.OnChangeLocation -> onChangeLocation(event.value)
-            is LocationsUiEvent.OnDeleteLocation -> onDeleteLocation(event.location)
-            LocationsUiEvent.OnGetLocations -> onGetLocations()
-            is LocationsUiEvent.OnSaveLocation -> onSaveLocation(event.location)
-            LocationsUiEvent.OnRequestCurrentLocation -> requestCurrentLocation()
-            is LocationsUiEvent.OnSetFusedLocationProviderClient -> setFusedLocationProviderClient(
-                event.context
+    private fun handleLocationsAndForecast() {
+        viewModelScope.launch {
+            val currentLocationDeferred = async { locationRepository.getCurrentLocation() }
+            val savedLocationsDeferred = async { locationRepository.getSavedLocations() }
+
+            val currentLocation = currentLocationDeferred.await()
+            val savedLocations = savedLocationsDeferred.await()
+
+            val userLocations = listOfNotNull(currentLocation) + savedLocations
+
+            handleMapForecastLocations(locations = userLocations)
+
+            uiState.update { currentUiState ->
+                currentUiState.copy(
+                    isLoadingLocations = false
+                )
+            }
+        }
+    }
+
+    private suspend fun handleMapForecastLocations(locations: List<Location?>) {
+        val locationsForecasts = mutableMapOf<Int?, ForecastDto?>()
+
+        // fetching forecast data for current location
+        locations.onEach { location ->
+            val forecastResult = location?.let { getForecastForLocation(location = it) }
+            forecastResult?.onSuccess { forecastData ->
+                locationsForecasts[location.id] = forecastData
+            }
+            forecastResult?.onFailure {
+                locationsForecasts[location.id] = null
+            }
+        }
+
+        uiState.update { currentUiState ->
+            currentUiState.copy(
+                locations = locations,
+                locationsForecasts = locationsForecasts
             )
         }
     }
 
-    private fun setFusedLocationProviderClient(context: Context) {
-        _fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    private suspend fun getForecastForLocation(location: Location): Result<ForecastDto> {
+        return try {
+            val response = openWeatherRepository.getCurrentForecast(
+                lat = location.latitude,
+                lng = location.latitude,
+            )
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(exception = Throwable(message = "Error when fetching forecast"))
+            }
+        } catch (e: Exception) {
+            Log.e("currentForecast", "Exception -> error when fetching forecast: ${e.cause}")
+            Result.failure(e)
+        }
     }
 
-    private fun onDeleteLocation(location: Location) {
+    fun deleteLocation(location: Location) {
         viewModelScope.launch {
             try {
-                Log.d("locations", "Current locations: ${uiState.value.userLocations}")
-//                uiState.update { currentState ->
-//                    currentState.copy(
-//                        userLocations = currentState.userLocations.minus(location)
-//                    )
-//                }
-                locationDao.deleteLocation(location)
-                Log.d("locations", "Locations after update: ${uiState.value.userLocations}")
+                locationRepository.deleteLocation(location = location)
 
+                val updatedLocationForecasts = mutableMapOf<Int?, ForecastDto?>()
+                updatedLocationForecasts.putAll(uiState.value.locationsForecasts)
+                updatedLocationForecasts.remove(location.id)
+
+                uiState.update { currentState ->
+                    currentState.copy(
+                        locations = currentState.locations.minus(location),
+                        locationsForecasts = updatedLocationForecasts
+                    )
+                }
             } catch (e: Exception) {
                 Log.e("deleteLocation", "Error when deleting location: ${e.printStackTrace()}")
             }
         }
     }
 
-    private fun onGetLocations() {
+    fun saveLocation(location: Location) {
         viewModelScope.launch {
             try {
-                locationDao.getLocations()
-                    .onEach { locations ->
-                        uiState.update { currentUiState ->
-                            currentUiState.copy(
-                                userLocations = locations,
-                            )
-                        }
-                    }.launchIn(this)
-                requestCurrentLocation()
-            } catch (e: Exception) {
-                uiState.update {
-                    it.copy(
-                        userLocations = emptyList(),
-                    )
-                }
-                Log.e(
-                    "currentLocation",
-                    "Error when fetching user locations: ${e.printStackTrace()}"
-                )
-            }
-        }
-    }
+                val savedLocationId = locationRepository.saveLocation(location = location).toInt()
+                val savedLocation = mapLocation(newId = savedLocationId, location = location)
 
-    private fun onSaveLocation(location: Location) {
-        viewModelScope.launch {
-            try {
-                locationDao.saveLocation(location = location)
-                Log.d("locations", "Success when saving Location in Database")
+                val forecastForLocation = getForecastForLocation(location = location)
+
+                val updatedLocationForecasts = mutableMapOf<Int?, ForecastDto?>()
+                updatedLocationForecasts.putAll(uiState.value.locationsForecasts)
+
+                forecastForLocation.onSuccess { forecastData ->
+                    updatedLocationForecasts[savedLocationId] = forecastData
+                }
+                forecastForLocation.onFailure {
+                    updatedLocationForecasts[savedLocationId] = null
+                }
+
                 uiState.update { currentState ->
                     currentState.copy(
                         geocodeLocations = emptyList(),
-                        userLocations = currentState.userLocations.plus(location)
+                        locations = currentState.locations.plus(savedLocation),
+                        locationsForecasts = updatedLocationForecasts
                     )
                 }
                 searchedLocationQuery.update { "" }
@@ -127,49 +141,28 @@ class LocationsViewModel(
         }
     }
 
-    private fun onChangeLocation(value: String) {
-        searchedLocationQuery.update { value }
+    private fun mapLocation(newId: Int, location: Location): Location {
+        return Location(
+            id = newId,
+            locality = location.locality,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            isCurrentUserLocality = location.isCurrentUserLocality,
+        )
     }
 
-    @SuppressLint("MissingPermission")
-    private fun requestCurrentLocation() {
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                locationResult.lastLocation?.let {
-                    val location = Location(
-                        locality = "Meu Local",
-                        latitude = it.latitude,
-                        longitude = it.longitude,
-                        isCurrentUserLocality = true
-                    )
-                    // Atualiza a localização no ViewModel
-                    uiState.update { currentUiState ->
-                        currentUiState.copy(
-                            currentUserLocation = location,
-                            userLocations = formUserLocationsList(
-                                currentUserLocation = location,
-                                userLocations = currentUiState.userLocations,
-                            ),
-                            isLoadingLocations = false,
-                        )
-                    }
-                }
-                // Remove as atualizações de localização após obter a primeira
-                _fusedLocationClient?.removeLocationUpdates(this)
+    @OptIn(FlowPreview::class)
+    fun onChangeLocation(value: String) {
+        searchedLocationQuery.update { value }
+
+        searchedLocationQuery
+            .debounce(700)
+            .filter { it.isNotEmpty() }
+            .distinctUntilChanged() // Ignore valores iguais consecutivos
+            .onEach { query ->
+                searchLocations(query)
             }
-        }
-
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            1000
-        ).build()
-
-        _fusedLocationClient?.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
+            .launchIn(viewModelScope)
     }
 
     private fun searchLocations(value: String) {
@@ -178,7 +171,6 @@ class LocationsViewModel(
             try {
                 val response = openWeatherRepository.getGeocodeFromText(query = value)
                 if (response.isSuccessful) {
-                    Log.e("searchLocation", "Success when searching locations: ${response.body()}")
                     uiState.update {
                         it.copy(geocodeLocations = response.body() ?: emptyList())
                     }

@@ -27,15 +27,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skycheck.R
+import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.entity.Location
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
 import com.example.skycheck.presentation.theme.MaxTemperature
 import com.example.skycheck.presentation.theme.MinTemperature
+import com.example.skycheck.utils.capitalizeSentence
+import com.example.skycheck.utils.convertKelvinToCelsius
 
 @Composable
 fun LocationCard(
     location: Location,
+    forecast: ForecastDto?,
     isCurrentUserLocation: Boolean = false
 ) {
     Box(
@@ -89,7 +93,12 @@ fun LocationCard(
                     }
                 }
                 Text(
-                    text = stringResource(id = R.string.valor_temperatura, 27),
+                    text = forecast?.main?.temp?.let {
+                        stringResource(
+                            id = R.string.valor_temperatura,
+                            convertKelvinToCelsius(temperature = it)
+                        )
+                    } ?: "--",
                     style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp)
                 )
             }
@@ -99,7 +108,9 @@ fun LocationCard(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = "Tempestade com chuva leve",
+                    text = forecast?.weather?.get(0)?.description?.let { desc ->
+                        capitalizeSentence(sentence = desc)
+                    } ?: "--",
                     style = MaterialTheme.typography.labelMedium,
                     color = ColorTextPrimaryVariant
                 )
@@ -107,15 +118,19 @@ fun LocationCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     LocationsMinMaxForecast(
-                        value = "21",
+                        value = forecast?.main?.minTemperature?.let {
+                            convertKelvinToCelsius(temperature = it)
+                        } ?: 0,
                         icon = Icons.Default.ArrowDropDown,
-                        color = MaxTemperature
+                        color = MinTemperature
                     )
                     Spacer(modifier = Modifier.width(2.dp))
                     LocationsMinMaxForecast(
-                        value = "33",
+                        value = forecast?.main?.maxTemperature?.let {
+                            convertKelvinToCelsius(temperature = it)
+                        } ?: 0,
                         icon = Icons.Default.ArrowDropUp,
-                        color = MinTemperature
+                        color = MaxTemperature
                     )
                 }
             }

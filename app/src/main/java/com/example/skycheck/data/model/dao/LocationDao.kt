@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LocationDao {
     @Insert
-    suspend fun saveLocation(location: Location)
+    suspend fun saveLocation(location: Location): Long
 
     @Delete
     suspend fun deleteLocation(location: Location)

@@ -8,7 +8,7 @@ interface LocationRepository {
 
     suspend fun getSavedLocations(): List<Location>
 
-    suspend fun saveLocation(location: Location)
+    suspend fun saveLocation(location: Location): Long
 
     suspend fun deleteLocation(location: Location)
 }

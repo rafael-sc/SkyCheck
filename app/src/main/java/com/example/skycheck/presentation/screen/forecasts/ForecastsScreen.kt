@@ -28,14 +28,14 @@ fun CurrentLocationScreen(
     viewModel: ForecastsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val pagerState = rememberPagerState(initialPage = 0) { uiState.userLocations.size }
+    val pagerState = rememberPagerState(initialPage = 0) { uiState.locations.size }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = ColorBackground,
         bottomBar = {
             ForecastsBottomBar(
-                pagesSize = uiState.userLocations.size,
+                pagesSize = uiState.locations.size,
                 selectedPage = pagerState.currentPage,
                 isLoadingLocations = uiState.isLoadingLocations,
                 onLocationsClick = {
@@ -53,8 +53,8 @@ fun CurrentLocationScreen(
                         .padding(innerPadding)
                         .fillMaxSize(),
                     state = pagerState
-                ) {
-                    val currentLocation = uiState.userLocations[pagerState.currentPage]
+                ) { page ->
+                    val currentLocation = uiState.locations[page]
                     if (currentLocation != null) {
                         ForecastsPage(
                             location = currentLocation,

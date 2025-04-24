@@ -82,7 +82,7 @@ class ForecastsViewModel(
 
         uiState.update { currentUiState ->
             currentUiState.copy(
-                userLocations = locations,
+                locations = locations,
                 locationsForecasts = locationsForecasts,
                 locationsNextDaysForecasts = locationsNextDaysForecasts
             )

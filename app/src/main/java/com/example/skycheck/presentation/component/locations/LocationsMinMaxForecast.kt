@@ -17,7 +17,7 @@ import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
 
 @Composable
 fun LocationsMinMaxForecast(
-    value: String,
+    value: Int,
     icon: ImageVector,
     color: Color
 ) {
@@ -31,7 +31,7 @@ fun LocationsMinMaxForecast(
             tint = color
         )
         Text(
-            text = stringResource(id = R.string.valor_temperatura, value.toInt()),
+            text = stringResource(id = R.string.valor_temperatura, value),
             style = MaterialTheme.typography.labelMedium,
             color = ColorTextPrimaryVariant
         )

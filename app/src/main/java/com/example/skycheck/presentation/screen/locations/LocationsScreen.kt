@@ -18,13 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,14 +44,8 @@ fun LocationsScreen(
     navController: NavController,
     viewModel: LocationsViewModel = koinViewModel()
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val searchedLocationQuery by viewModel.searchedLocationQuery.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(LocationsUiEvent.OnSetFusedLocationProviderClient(context = context))
-        viewModel.onEvent(LocationsUiEvent.OnGetLocations)
-    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -77,8 +69,8 @@ fun LocationsScreen(
             Spacer(modifier = Modifier.height(16.dp))
             SearchInput(
                 value = searchedLocationQuery,
-                onValueChange = {
-                    viewModel.onEvent(LocationsUiEvent.OnChangeLocation(it))
+                onValueChange = { newValue ->
+                    viewModel.onChangeLocation(value = newValue)
                 },
                 isSearching = uiState.isSearching
             )
@@ -107,14 +99,12 @@ fun LocationsScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        viewModel.onEvent(
-                                            event = LocationsUiEvent.OnSaveLocation(
-                                                location = Location(
-                                                    locality = location.name,
-                                                    latitude = location.lat,
-                                                    longitude = location.lon,
-                                                    isCurrentUserLocality = false
-                                                )
+                                        viewModel.saveLocation(
+                                            location = Location(
+                                                locality = location.name,
+                                                latitude = location.lat,
+                                                longitude = location.lon,
+                                                isCurrentUserLocality = false
                                             )
                                         )
                                     }
@@ -129,30 +119,42 @@ fun LocationsScreen(
             if (uiState.isLoadingLocations) {
                 LoadingBox()
             } else {
-                if (uiState.userLocations.isNotEmpty()) {
+                if (uiState.locations.isNotEmpty() && uiState.locationsForecasts.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(
-                            items = uiState.userLocations,
-                            key = { it.id ?: 0 }
+                            items = uiState.locations,
+                            key = { it?.id ?: 0 }
                         ) { location ->
-                            if (location.id == null) {
-                                LocationCard(location = location)
-                            } else {
-                                SwipeToDeleteContainer(
-                                    location = location,
-                                    onDelete = {
-                                        viewModel.onEvent(LocationsUiEvent.OnDeleteLocation(location = location))
-                                    },
-                                    content = { LocationCard(location = location) }
-                                )
+                            if (location != null) {
+                                if (location.isCurrentUserLocality) {
+                                    LocationCard(
+                                        location = location,
+                                        forecast = uiState.locationsForecasts[location.id]
+                                    )
+                                } else {
+                                    SwipeToDeleteContainer(
+                                        location = location,
+                                        onDelete = {
+                                            viewModel.deleteLocation(location = location)
+                                        },
+                                        content = {
+                                            LocationCard(
+                                                location = location,
+                                                forecast = uiState.locationsForecasts[location.id],
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

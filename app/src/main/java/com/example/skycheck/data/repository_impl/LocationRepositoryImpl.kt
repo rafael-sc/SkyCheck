@@ -53,4 +53,12 @@ class LocationRepositoryImpl(
             emptyList()
         }
     }
+
+    override suspend fun saveLocation(location: Location): Long {
+        return locationDao.saveLocation(location = location)
+    }
+
+    override suspend fun deleteLocation(location: Location) {
+        locationDao.deleteLocation(location = location)
+    }
 }
