@@ -17,7 +17,7 @@ class OnboardingViewModel(
 
     init {
         viewModelScope.launch {
-            isOnboardingDone.update { dataStoreRepository.getOnboardingDone().first() }
+            isOnboardingDone.update { dataStoreRepository.getOnboardingDone().first() ?: false }
         }
     }
 
