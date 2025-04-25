@@ -71,31 +71,33 @@ fun LocationsScreen(
                     top = 12.dp
                 )
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(
-                    onClick = {
-                        navController.navigate(
-                            UiRoutes.Forecasts(needReload = uiState.hasChanged)
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(
+                                UiRoutes.Forecasts(needReload = uiState.hasChanged)
+                            )
+                        },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Voltar",
+                            tint = ColorTextAction
                         )
-                    },
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "Voltar",
-                        tint = ColorTextAction
+                    }
+                }
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = stringResource(id = R.string.localidades),
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                        color = ColorTextPrimary
                     )
                 }
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = stringResource(id = R.string.localidades),
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = ColorTextPrimary
-                )
             }
             Spacer(modifier = Modifier.height(16.dp))
             SearchInput(
