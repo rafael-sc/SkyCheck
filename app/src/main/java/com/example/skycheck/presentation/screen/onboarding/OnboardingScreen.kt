@@ -110,7 +110,11 @@ fun OnboardingScreen(
                                 || permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
                             ) {
                                 // I HAVE ACCESS TO LOCATION
-                                navController.navigate(UiRoutes.Forecasts(needReload = true))
+                                navController.navigate(UiRoutes.Forecasts(needReload = true)) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = true
+                                    }
+                                }
                             } else {
                                 // ASK FOR PERMISSION
                                 val rationaleRequired =
@@ -142,7 +146,9 @@ fun OnboardingScreen(
                     OnboardingStartButton {
                         if (hasLocationPermission(context)) {
                             viewModel.onButtonClick()
-                            navController.navigate(UiRoutes.Forecasts(needReload = true))
+                            navController.navigate(UiRoutes.Forecasts(needReload = true)) {
+                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                            }
                         } else {
                             requestPermissionLauncher.launch(
                                 arrayOf(
