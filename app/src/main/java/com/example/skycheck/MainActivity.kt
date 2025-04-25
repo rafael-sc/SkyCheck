@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.Ease
+import androidx.compose.animation.core.tween
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -29,7 +32,26 @@ class MainActivity : ComponentActivity() {
                     composable<UiRoutes.Onboarding> {
                         OnboardingScreen(navController = navController)
                     }
-                    composable<UiRoutes.Locations> {
+                    composable<UiRoutes.Locations>(
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
+                    ) {
                         LocationsScreen(navController = navController)
                     }
                     composable<UiRoutes.Forecasts> { entry ->
