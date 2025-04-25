@@ -34,7 +34,7 @@ import com.example.skycheck.MainActivity
 import com.example.skycheck.R
 import com.example.skycheck.presentation.component.onboarding.OnboardingPermissionComponent
 import com.example.skycheck.presentation.component.onboarding.OnboardingStartButton
-import com.example.skycheck.presentation.route.Forecasts
+import com.example.skycheck.presentation.route.UiRoutes
 import com.example.skycheck.presentation.theme.ColorBackground
 import com.example.skycheck.presentation.theme.ColorTextAction
 import com.example.skycheck.presentation.theme.ColorTextPrimary
@@ -59,11 +59,12 @@ fun OnboardingScreen(
             null -> Box(modifier = Modifier.fillMaxSize())
             true -> {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Forecasts) {
+                    navController.navigate(UiRoutes.Forecasts(needReload = true)) {
                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                     }
                 }
             }
+
             false -> {
                 Column(
                     modifier = Modifier
@@ -109,7 +110,7 @@ fun OnboardingScreen(
                                 || permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
                             ) {
                                 // I HAVE ACCESS TO LOCATION
-                                navController.navigate(Forecasts)
+                                navController.navigate(UiRoutes.Forecasts(needReload = true))
                             } else {
                                 // ASK FOR PERMISSION
                                 val rationaleRequired =
@@ -141,7 +142,7 @@ fun OnboardingScreen(
                     OnboardingStartButton {
                         if (hasLocationPermission(context)) {
                             viewModel.onButtonClick()
-                            navController.navigate(Forecasts)
+                            navController.navigate(UiRoutes.Forecasts(needReload = true))
                         } else {
                             requestPermissionLauncher.launch(
                                 arrayOf(

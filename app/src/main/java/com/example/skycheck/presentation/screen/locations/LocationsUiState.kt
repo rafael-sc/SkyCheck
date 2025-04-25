@@ -10,4 +10,5 @@ data class LocationsUiState(
     val locationsForecasts: Map<Int?, ForecastDto?> = emptyMap(),
     val geocodeLocations: List<GeocodeLocationDto> = emptyList(),
     val isSearching: Boolean = false,
+    val hasChanged: Boolean = false,
 )

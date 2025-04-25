@@ -8,6 +8,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,19 +17,26 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.skycheck.presentation.component.forecasts.ForecastsBottomBar
 import com.example.skycheck.presentation.component.forecasts.ForecastsPage
-import com.example.skycheck.presentation.route.Locations
+import com.example.skycheck.presentation.route.UiRoutes
 import com.example.skycheck.presentation.theme.ColorBackground
 import com.example.skycheck.utils.LoadingBox
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CurrentLocationScreen(
+fun ForecastsScreen(
     navController: NavController,
-    viewModel: ForecastsViewModel = koinViewModel()
+    viewModel: ForecastsViewModel = koinViewModel(),
+    needReload: Boolean = true
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val pagerState = rememberPagerState(initialPage = 0) { uiState.locations.size }
+
+    LaunchedEffect(Unit) {
+        if (needReload) {
+            viewModel.handleLocationsAndForecast()
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -39,7 +47,7 @@ fun CurrentLocationScreen(
                 selectedPage = pagerState.currentPage,
                 isLoadingLocations = uiState.isLoadingLocations,
                 onLocationsClick = {
-                    navController.navigate(Locations)
+                    navController.navigate(UiRoutes.Locations)
                 }
             )
         }
@@ -72,5 +80,5 @@ fun CurrentLocationScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun CurrentLocationScreenPreview() {
-    CurrentLocationScreen(navController = rememberNavController())
+    ForecastsScreen(navController = rememberNavController(), needReload = false)
 }

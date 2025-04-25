@@ -3,10 +3,13 @@ package com.example.skycheck.presentation.route
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Onboarding
+object UiRoutes {
+    @Serializable
+    data object Onboarding
 
-@Serializable
-data object Forecasts
+    @Serializable
+    data class Forecasts(val needReload: Boolean)
 
-@Serializable
-data object Locations
+    @Serializable
+    data object Locations
+}

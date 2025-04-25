@@ -18,6 +18,6 @@ interface OpenWeatherRepository {
 
     suspend fun getGeocodeFromText(
         query: String,
-        limit: Int = 1,
+        limit: Int = 2,
     ) : Response<List<GeocodeLocationDto>>
 }

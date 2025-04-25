@@ -100,7 +100,8 @@ class LocationsViewModel(
                 uiState.update { currentState ->
                     currentState.copy(
                         locations = currentState.locations.minus(location),
-                        locationsForecasts = updatedLocationForecasts
+                        locationsForecasts = updatedLocationForecasts,
+                        hasChanged = true
                     )
                 }
             } catch (e: Exception) {
@@ -131,7 +132,8 @@ class LocationsViewModel(
                     currentState.copy(
                         geocodeLocations = emptyList(),
                         locations = currentState.locations.plus(savedLocation),
-                        locationsForecasts = updatedLocationForecasts
+                        locationsForecasts = updatedLocationForecasts,
+                        hasChanged = true
                     )
                 }
                 searchedLocationQuery.update { "" }

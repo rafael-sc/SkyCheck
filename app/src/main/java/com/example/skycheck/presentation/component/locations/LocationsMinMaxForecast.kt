@@ -27,12 +27,12 @@ fun LocationsMinMaxForecast(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(24.dp),
             tint = color
         )
         Text(
             text = stringResource(id = R.string.valor_temperatura, value),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = ColorTextPrimaryVariant
         )
     }

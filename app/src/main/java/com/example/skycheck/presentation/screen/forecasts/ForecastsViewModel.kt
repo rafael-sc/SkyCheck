@@ -20,11 +20,7 @@ class ForecastsViewModel(
 
     val uiState = MutableStateFlow(ForecastsUiState())
 
-    init {
-        handleLocationsAndForecast()
-    }
-
-    private fun handleLocationsAndForecast() {
+    fun handleLocationsAndForecast() {
         viewModelScope.launch {
             val currentLocationDeferred = async { locationRepository.getCurrentLocation() }
             val savedLocationsDeferred = async { locationRepository.getSavedLocations() }
