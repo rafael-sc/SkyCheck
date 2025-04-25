@@ -15,29 +15,20 @@ class OpenWeatherRepositoryImpl(
         lat: Double,
         lng: Double
     ): Response<ForecastDto> {
-        return openWeatherApi.getCurrentForecast(
-            lat = lat,
-            lon = lng,
-        )
+        return openWeatherApi.getCurrentForecast(lat = lat, lon = lng)
     }
 
     override suspend fun getNext5DaysForecast(
         lat: Double,
         lng: Double
     ): Response<Next5DaysForecastDto> {
-        return openWeatherApi.getNext5DaysForecast(
-            lat = lat,
-            lon = lng,
-        )
+        return openWeatherApi.getNext5DaysForecast(lat = lat, lon = lng)
     }
 
     override suspend fun getGeocodeFromText(
         query: String,
         limit: Int
     ): Response<List<GeocodeLocationDto>> {
-        return openWeatherApi.getGeocodeFromText(
-            query = query,
-            limit = limit,
-        )
+        return openWeatherApi.getGeocodeFromText(query = query, limit = limit)
     }
 }

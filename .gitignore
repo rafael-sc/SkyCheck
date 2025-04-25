@@ -5,8 +5,8 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 
-# secrets.xml
-app/src/main/res/values/secrets.xml
+# Secrets.kt
+app/src/main/java/com/example/skycheck/utils/Secrets.kt
 
 # Log/OS Files
 *.log
