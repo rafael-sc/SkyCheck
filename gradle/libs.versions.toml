@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 converterGson = "2.11.0"
+core = "1.6.1"
 coreTesting = "1.1.1"
 datastoreCore = "1.1.1"
 gson = "2.10.1"
@@ -23,12 +24,14 @@ navigationCompose = "2.8.5"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
 kotlinSerialization = "1.7.3"
+robolectric = "4.11.1"
 roomVersion = "2.6.1"
 playServicesLocation = "21.3.0"
 junitJunit = "4.12"
 runner = "1.6.2"
 
 [libraries]
+androidx-core = { module = "androidx.test:core", version.ref = "core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastoreCore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastoreCore" }
@@ -67,6 +70,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 kotlin-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

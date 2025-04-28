@@ -105,6 +105,8 @@ dependencies {
     testImplementation(libs.core.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.runner)
+    testImplementation (libs.androidx.core)
+    testImplementation(libs.robolectric)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

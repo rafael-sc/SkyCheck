@@ -3,9 +3,7 @@ package com.example.skycheck.data.model.dao
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.skycheck.data.model.database.SkyCheckDatabase
-import com.example.skycheck.data.model.entity.Location
 import com.example.skycheck.data.model.mock.locationsMock
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -15,8 +13,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 class LocationDaoTest {
 
     @get:Rule
