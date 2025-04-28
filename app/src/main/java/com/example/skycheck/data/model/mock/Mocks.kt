@@ -3,7 +3,7 @@ package com.example.skycheck.data.model.mock
 import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.entity.Location
 
-val locationsPageMock = listOf(
+val locationsMock = listOf(
     Location(
         id = 1,
         locality = "São Paulo",

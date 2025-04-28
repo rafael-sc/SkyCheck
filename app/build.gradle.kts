@@ -47,7 +47,7 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/*"
         }
     }
 }
@@ -55,6 +55,7 @@ android {
 dependencies {
     // Google Location
     implementation(libs.play.services.location)
+    testImplementation(libs.junit.junit)
 
     // Room Database
     ksp(libs.androidx.room.compiler)
@@ -95,6 +96,15 @@ dependencies {
 
     // Serialization
     implementation(libs.kotlin.serialization)
+
+    // MockK
+    implementation(libs.mockk)
+
+    // Test - aditional libs
+    androidTestImplementation(libs.core.testing)
+    testImplementation(libs.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.runner)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

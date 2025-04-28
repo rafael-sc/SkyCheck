@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.example.skycheck.R
 import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.entity.Location
-import com.example.skycheck.data.model.mock.locationsPageMock
+import com.example.skycheck.data.model.mock.locationsMock
 import com.example.skycheck.data.model.mock.mockForecast
 import com.example.skycheck.presentation.theme.ColorTextPrimary
 import com.example.skycheck.presentation.theme.ColorTextPrimaryVariant
@@ -168,7 +168,7 @@ fun LocationCard(
 @Composable
 private fun LocationCardPreview() {
     LocationCard(
-        location = locationsPageMock[0],
+        location = locationsMock[0],
         forecast = mockForecast,
     )
 }
