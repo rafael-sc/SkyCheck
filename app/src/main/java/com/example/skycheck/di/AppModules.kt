@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.example.skycheck.data.api.OpenWeatherApi
 import com.example.skycheck.data.manager.DataStoreManager
 import com.example.skycheck.data.model.database.SkyCheckDatabase
+import com.example.skycheck.data.network.AddApiKeyAsQueryInterceptor
 import com.example.skycheck.data.repository_impl.DataStoreRepositoryImpl
 import com.example.skycheck.data.repository_impl.LocationRepositoryImpl
 import com.example.skycheck.data.repository_impl.OpenWeatherRepositoryImpl
@@ -38,6 +39,7 @@ val networkModule = module {
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
+            .addInterceptor(AddApiKeyAsQueryInterceptor())
             .build()
     }
 

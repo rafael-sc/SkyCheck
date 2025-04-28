@@ -1,9 +1,9 @@
 package com.example.skycheck.data.api
 
+import com.example.skycheck.BuildConfig
 import com.example.skycheck.data.model.dto.ForecastDto
 import com.example.skycheck.data.model.dto.GeocodeLocationDto
 import com.example.skycheck.data.model.dto.Next5DaysForecastDto
-import com.example.skycheck.utils.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -14,7 +14,6 @@ interface OpenWeatherApi {
     suspend fun getCurrentForecast(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("appid") apiKey: String = API_KEY,
         @Query("lang") lang: String = "pt_br"
     ): Response<ForecastDto>
 
@@ -22,7 +21,6 @@ interface OpenWeatherApi {
     suspend fun getNext5DaysForecast(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("appid") apiKey: String = API_KEY,
         @Query("lang") lang: String = "pt_br"
     ): Response<Next5DaysForecastDto>
 
@@ -30,7 +28,7 @@ interface OpenWeatherApi {
     suspend fun getGeocodeFromText(
         @Query("q") query: String,
         @Query("limit") limit: Int,
-        @Query("appid") apiKey: String = API_KEY,
         @Query("lang") lang: String = "pt_br",
     ): Response<List<GeocodeLocationDto>>
 }
+

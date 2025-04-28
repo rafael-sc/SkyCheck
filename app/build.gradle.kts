@@ -2,20 +2,23 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
-    kotlin("plugin.serialization") version "2.0.21"
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.serialization)
 }
 
 android {
     namespace = "com.example.skycheck"
     compileSdk = 35
 
+
     defaultConfig {
         applicationId = "com.example.skycheck"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "API_KEY", "\"${System.getenv("API_KEY")}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -41,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -105,7 +109,7 @@ dependencies {
     testImplementation(libs.core.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.runner)
-    testImplementation (libs.androidx.core)
+    testImplementation(libs.androidx.core)
     testImplementation(libs.robolectric)
 
     implementation(libs.androidx.core.ktx)
